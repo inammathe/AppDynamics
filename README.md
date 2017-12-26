@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/lcqp4n6ahjv4ysoq/branch/master?svg=true)](https://ci.appveyor.com/project/inammathe/appdynamics/branch/master)
+
 # AppDynamics
 PowerShell module of various helpful cmdlets which can be used to manage various aspects of AppDynamics.
 
