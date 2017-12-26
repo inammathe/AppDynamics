@@ -39,7 +39,7 @@ function Write-AppDLog
     Begin
     {
         # Set VerbosePreference to Continue so that verbose messages are displayed.
-        $VerbosePreference = 'Continue'
+        $VerbosePreference = $PSCmdlet.GetVariableValue('VerbosePreference')
     }
     Process
     {
