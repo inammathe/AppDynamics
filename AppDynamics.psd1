@@ -23,6 +23,8 @@
 
     # Which PowerShell variables are exported from your module? (eg. Fruits, Vegetables)
     #VariablesToExport = @('')
+    # Functions to export from this module
+    FunctionsToExport = '*'
 
     # PowerShell Gallery: Define your module's metadata
     PrivateData = @{
