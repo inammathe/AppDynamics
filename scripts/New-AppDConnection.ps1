@@ -18,12 +18,15 @@
 #>
 function New-AppDConnection
 {
-
+    [CmdletBinding()]
+    param()
     Begin
     {
+        Write-AppDLog "$($MyInvocation.MyCommand)"
+
         If((([string]::IsNullOrEmpty($env:AppDURL)) -or ([string]::IsNullOrEmpty($env:AppDAuth))) -or ([string]::IsNullOrEmpty($env:AppDAccountID)))
         {
-            throw "At least one of the following variables does not have a value set: `$env:AppDURL or `$env:AppDAuth or `$env:AppDAccountID. Use Set-AppDConnectionInfo to set these values"
+            throw "At least one of the following variables does not have a value set: `$env:AppDURL or `$env:AppDAuth or `$env:AppDAccountID.`n`nUse Set-AppDConnectionInfo to set these values"
         }
     }
     Process

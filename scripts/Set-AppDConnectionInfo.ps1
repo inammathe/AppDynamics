@@ -11,8 +11,6 @@
    Set-AppDynamicsConnectionInfo -URL "http://MyAppDynamics.AwesomeCompany.com"
 
    Set connection info with a specific Auth string for an AppDynamics instance
-.LINK
-   Github project: ghttps://github.com/Dalmirog/Octoposh
 #>
 function Set-AppDConnectionInfo
 {
@@ -20,7 +18,7 @@ function Set-AppDConnectionInfo
     Param
     (
         # AppDynamics URL
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [string]$URL = 'http://appdynamics.contoso.com:8090',
 
         # AppDynamics username
@@ -33,19 +31,12 @@ function Set-AppDConnectionInfo
     )
     Begin
     {
-
+        Write-AppDLog "$($MyInvocation.MyCommand)`tURL: $URL"
     }
     Process
     {
-        # Create authorization string
-        if ($Username -notmatch '.+?@customer1$') #ends with @customer1
-        {
-            $Username += '@customer1'
-        }
-        $auth = ('Basic ' + [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("$username`:$password")))
-
         $env:AppDURL = $URL
-        $env:AppDAuth = $auth
+        $env:AppDAuth = Get-AppDAuth -UserName $Username -Password $Password
         $env:AppDAccountID = Get-AppDAccountId
     }
     End

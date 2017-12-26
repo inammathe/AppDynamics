@@ -13,7 +13,7 @@ $auth = Get-AppDAuth -UserName 'guest@customer1' -Password 'guest'
 $baseUrl = 'http://appdynamics.contoso.com:8090'
 
 # Get all Applications
-Get-AppDApplications -auth $auth -baseUrl $baseUrl
+Get-AppDApplication -auth $auth -baseUrl $baseUrl
 
 # Get some Business transaction metric data
 $appName = 'UBET'

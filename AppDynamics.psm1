@@ -90,16 +90,18 @@ function Write-AppDLog
 
 #region Helper Functions. These wont get exported by the module, but will be available to be used by the exported cmdlets
 function Put-AppDResource([string]$uri, [object]$resource) {
+    Write-AppDLog "$($MyInvocation.MyCommand)`turi:$uri`n`tbody:$resource"
     Invoke-RestMethod -Method Put -Uri "$env:AppDURL/$uri" -Body $($resource | ConvertTo-Json -Depth 10) -Headers $c.header -Verbose:$false
 }
 
 function Post-AppDResource([string]$uri, [object]$resource) {
+    Write-AppDLog "$($MyInvocation.MyCommand)`turi:$uri`n`tbody:$resource"
     Invoke-RestMethod -Method Post -Uri "$env:AppDURL/$uri" -Body $($resource | ConvertTo-Json -Depth 10) -Headers $c.header -Verbose:$false
 }
 
 function Get-AppDResource([string]$uri) {
-    Write-AppDLog "$($MyInvocation.MyCommand):`t$uri"
-    return Invoke-RestMethod -Method Get -Uri "$env:AppDURL/$uri" -Headers $c.header -Verbose:$false
+    Write-AppDLog "$($MyInvocation.MyCommand)`turi:$uri"
+    Invoke-RestMethod -Method Get -Uri "$env:AppDURL/$uri" -Headers $c.header -Verbose:$false
 }
 
 #region Utility functions

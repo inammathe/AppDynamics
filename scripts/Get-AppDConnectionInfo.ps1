@@ -7,14 +7,14 @@
    Get-AppDConnectionInfo
 
    Get the current connection info. Its the same as getting the values of $env:AppDURL and $Env:AppDAuth
-.LINK
-   Github project: ghttps://github.com/Dalmirog/Octoposh
 #>
 function Get-AppDConnectionInfo
 {
+    [CmdletBinding()]
+    param()
     Begin
     {
-        
+        Write-AppDLog "$($MyInvocation.MyCommand)"
     }
     Process
     {

@@ -6,22 +6,28 @@
     to query the API first.
     Will default to the Production controller if the controller is not specified.
 .EXAMPLE
-    PS C:\> Set-AppDAccountId -Controller 'Production'
+    PS C:\> Get-AppDAccountId
+
     Queries the controller API for the accountId at /controller/api/accounts/myaccount
 #>
 function Get-AppDAccountId
 {
     [CmdletBinding()]
     param()
-    if (([string]::IsNullOrEmpty($env:AppDAccountID))) {
-        If(([string]::IsNullOrEmpty($env:AppDURL)) -or ([string]::IsNullOrEmpty($env:AppDAuth)))
-        {
-            throw "At least one of the following variables does not have a value set: `$env:AppDURL or `$env:AppDAuth. Use Set-AppDConnectionInfo to set these values"
-        }
-        else
-        {
-            $env:AppDAccountID = (Invoke-RestMethod -uri "$env:AppDURL/controller/api/accounts/myaccount" -Headers @{'Authorization' = $env:AppDAuth}).id
-        }
+    Begin
+    {
+        Write-AppDLog "$($MyInvocation.MyCommand)"
     }
-    Write-Output $env:AppDAccountID
+    Process
+    {
+        if (([string]::IsNullOrEmpty($env:AppDAccountID))) {
+            If (([string]::IsNullOrEmpty($env:AppDURL)) -or ([string]::IsNullOrEmpty($env:AppDAuth))) {
+                throw "At least one of the following variables does not have a value set: `$env:AppDURL or `$env:AppDAuth. Use Set-AppDConnectionInfo to set these values"
+            }
+            else {
+                $env:AppDAccountID = (Invoke-RestMethod -uri "$env:AppDURL/controller/api/accounts/myaccount" -Headers @{'Authorization' = $env:AppDAuth}).id
+            }
+        }
+        Write-Output $env:AppDAccountID
+    }
 }

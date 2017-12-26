@@ -32,16 +32,16 @@ function Get-AppDMetricData
 {
     [CmdletBinding()]
     Param(
+        # Mandatory application ID.
+        [Parameter(Mandatory, Position = 0, Parametersetname = 'AppId')]
+        $AppId,
+
+        # Use the name of the application if you do not know the AppId
+        [Parameter(Mandatory, Position = 0, ParameterSetName = 'AppName')]
+        $AppName,
+
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [String[]]$MetricPath,
-
-        [Parameter(Mandatory=$true)]
-        [String]$AppName,
-
-        [Parameter(Mandatory=$false)]
-        [String]$Auth,
-
-        $baseUrl = 'http://appdynamics.contoso.com:8090/controller/rest/applications/',
 
         [Parameter(Mandatory=$false)]
         [String]
@@ -49,9 +49,17 @@ function Get-AppDMetricData
     )
     Begin
     {
-        if(!$auth)
-        {
-            $auth = Get-AppDAuth
+        Write-AppDLog "$($MyInvocation.MyCommand)"
+
+        $c = New-AppDConnection
+
+        if ($MyInvocation.MyCommand.ParameterSets -contains 'AppName') {
+            $AppId = (Get-AppDApplication -AppName $AppName).id
+            if (!$AppId) {
+                $msg = "Failed to find application with application name: $AppName"
+                Write-AppDLog -Message $msg -Level 'Error'
+                Throw $msg
+            }
         }
     }
     Process
@@ -66,10 +74,10 @@ function Get-AppDMetricData
         $URLS = $URLS.Replace(' ','%20')
         $URLS = $URLS.Replace('|','%7C')
 
-        $URLS | %{Write-Verbose $_}
+        $URLS | ForEach-Object { Write-Verbose $_ }
 
         foreach ($url in $URLS) {
-            $response = Invoke-RestMethod $url -Headers @{'Authorization' = $auth}
+            $response = Get-AppDResource -uri $url
 
             [PSCustomObject]@{
                 metricId = $response.'metric-datas'.'metric-data'.metricId
