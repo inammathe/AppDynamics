@@ -24,17 +24,17 @@
     # Which PowerShell variables are exported from your module? (eg. Fruits, Vegetables)
     #VariablesToExport = @('')
 
-    <# PowerShell Gallery: Define your module's metadata
+    # PowerShell Gallery: Define your module's metadata
     PrivateData = @{
         PSData = @{
             # What keywords represent your PowerShell module? (eg. cloud, tools, framework, vendor)
-            Tags = @('cooltag1', 'cooltag2')
+            Tags = @('AppDynamics', 'vendor')
 
             # What software license is your code being released under? (see https://opensource.org/licenses)
             LicenseUri = ''
 
             # What is the URL to your project's website?
-            ProjectUri = ''
+            ProjectUri = 'https://github.com/inammathe/AppDynamics'
 
             # What is the URI to a custom icon file for your project? (optional)
             IconUri = ''
