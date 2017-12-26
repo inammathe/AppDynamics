@@ -53,7 +53,7 @@ function Write-AppDLog
         # If attempting to write to a log file in a folder/path that doesn't exist create the file including the path.
         elseif (!(Test-Path $Path)) {
             Write-Verbose "Creating $Path."
-            $NewLogFile = New-Item $Path -Force -ItemType File
+            New-Item $Path -Force -ItemType File | Out-Null
             }
 
         else {
@@ -89,72 +89,20 @@ function Write-AppDLog
 #endregion
 
 #region Helper Functions. These wont get exported by the module, but will be available to be used by the exported cmdlets
-function Put-AppDResource([string]$uri, [object]$resource) {
+function Put-AppDResource( [string]$uri, [object]$resource, [object]$connectionInfo) {
     Write-AppDLog "$($MyInvocation.MyCommand)`turi:$uri`n`tbody:$resource"
-    Invoke-RestMethod -Method Put -Uri "$env:AppDURL/$uri" -Body $($resource | ConvertTo-Json -Depth 10) -Headers $c.header -Verbose:$false
+    Invoke-RestMethod -Method Put -Uri "$env:AppDURL/$uri" -Body $($resource | ConvertTo-Json -Depth 10) -Headers $connectionInfo.header -Verbose:$false
 }
 
-function Post-AppDResource([string]$uri, [object]$resource) {
+function Post-AppDResource([string]$uri, [object]$resource, [object]$connectionInfo) {
     Write-AppDLog "$($MyInvocation.MyCommand)`turi:$uri`n`tbody:$resource"
-    Invoke-RestMethod -Method Post -Uri "$env:AppDURL/$uri" -Body $($resource | ConvertTo-Json -Depth 10) -Headers $c.header -Verbose:$false
+    Invoke-RestMethod -Method Post -Uri "$env:AppDURL/$uri" -Body $($resource | ConvertTo-Json -Depth 10) -Headers $connectionInfo.header -Verbose:$false
 }
 
-function Get-AppDResource([string]$uri) {
+function Get-AppDResource([string]$uri, [object]$connectionInfo) {
     Write-AppDLog "$($MyInvocation.MyCommand)`turi:$uri"
-    Invoke-RestMethod -Method Get -Uri "$env:AppDURL/$uri" -Headers $c.header -Verbose:$false
+    Invoke-RestMethod -Method Get -Uri "$env:AppDURL/$uri" -Headers $connectionInfo.header -Verbose:$false
 }
 
 #region Utility functions
-function Get-IISModule
-{
-    if (!(Get-Module Webadministration))
-    {
-        Import-Module Webadministration
-    }
-}
-
-
-function Confirm-Admin
-{
-    If (!([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] “Administrator”))
-    {
-        Write-Output $false
-    }
-    else
-    {
-       Write-Output $true
-    }
-}
-
-function New-PSCredential
-{
-    Param
-    (
-        [Parameter(Mandatory)]
-        [string]$UserName,
-
-        [Parameter(Mandatory)]
-        [String]$Password
-    )
-    if([String]::IsNullOrEmpty($UserName) -or  [String]::IsNullOrEmpty($Password))
-    {
-        Get-Credentials
-    }
-    else {
-        $Credentials = New-Object System.Management.Automation.PSCredential ($UserName, (ConvertTo-SecureString $Password -AsPlainText -Force))
-        Write-Output $Credentials
-    }
-}
-
-function ConvertTo-Scriptblock  {
-	Param(
-        [Parameter(
-            Mandatory = $true,
-            ParameterSetName = '',
-            ValueFromPipeline = $true)]
-            [string]$string
-        )
-       $scriptBlock = [scriptblock]::Create($string)
-       return $scriptBlock
-}
 #endregion
