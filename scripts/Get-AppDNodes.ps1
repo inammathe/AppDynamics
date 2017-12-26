@@ -21,7 +21,7 @@ function Get-AppDNodes
     )
     Begin
     {
-        Write-AppDLog "$(MyInvocation.MyCommand)"
+        Write-AppDLog "$($MyInvocation.MyCommand)"
 
         $connectionInfo = New-AppDConnection
 

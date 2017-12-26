@@ -24,7 +24,7 @@ function Get-AppDAuth
     )
     Begin
     {
-        Write-AppDLog "$(MyInvocation.MyCommand)"
+        Write-AppDLog "$($MyInvocation.MyCommand)"
     }
     Process
     {

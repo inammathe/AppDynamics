@@ -18,7 +18,7 @@ function Get-AppDBTCountbyTier {
     )
     Begin
     {
-        Write-AppDLog "$(MyInvocation.MyCommand)"
+        Write-AppDLog "$($MyInvocation.MyCommand)"
 
         if ($MyInvocation.MyCommand.ParameterSets -contains 'AppName')
         {

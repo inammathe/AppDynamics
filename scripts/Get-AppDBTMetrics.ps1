@@ -18,7 +18,7 @@ function Get-AppDBTMetrics
     )
     Begin
     {
-        Write-AppDLog "$(MyInvocation.MyCommand)"
+        Write-AppDLog "$($MyInvocation.MyCommand)"
     }
     Process
     {

@@ -25,7 +25,7 @@ function Get-AppDBTs {
     )
     Begin
     {
-        Write-AppDLog "$(MyInvocation.MyCommand)"
+        Write-AppDLog "$($MyInvocation.MyCommand)"
 
         $connectionInfo = New-AppDConnection
 
