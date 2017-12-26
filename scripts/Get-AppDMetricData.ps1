@@ -51,7 +51,7 @@ function Get-AppDMetricData
     {
         Write-AppDLog "$($MyInvocation.MyCommand)"
 
-        $c = New-AppDConnection
+        $connectionInfo = New-AppDConnection
 
         if ($MyInvocation.MyCommand.ParameterSets -contains 'AppName') {
             $AppId = (Get-AppDApplication -AppName $AppName).id
@@ -77,7 +77,7 @@ function Get-AppDMetricData
         $URLS | ForEach-Object { Write-Verbose $_ }
 
         foreach ($url in $URLS) {
-            $response = Get-AppDResource -uri $url
+            $response = Get-AppDResource -uri $url -connectionInfo $connectionInfo
 
             [PSCustomObject]@{
                 metricId = $response.'metric-datas'.'metric-data'.metricId

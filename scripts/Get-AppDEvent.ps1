@@ -34,7 +34,7 @@ function Get-AppDEvent
     {
         Write-AppDLog "$($MyInvocation.MyCommand)"
 
-        $c = New-AppDConnection
+        $connectionInfo = New-AppDConnection
 
         if ($MyInvocation.MyCommand.ParameterSets -contains 'AppName') {
             $AppId = (Get-AppDApplication -AppName $AppName).id
@@ -49,6 +49,6 @@ function Get-AppDEvent
     {
         $daysAgoInMins = [MATH]::Round(((Get-Date) - ((Get-Date).AddDays(-$daysAgo))).TotalMinutes)
 
-        Get-AppDResource -uri "controller/rest/applications/$AppId/events?event-types=$eventType&severities=$severities&time-range-type=BEFORE_NOW&duration-in-mins=$daysAgoInMins&output=JSON"
+        Get-AppDResource -uri "controller/rest/applications/$AppId/events?event-types=$eventType&severities=$severities&time-range-type=BEFORE_NOW&duration-in-mins=$daysAgoInMins&output=JSON" -connectionInfo $connectionInfo
     }
 }

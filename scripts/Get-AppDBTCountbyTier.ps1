@@ -20,8 +20,6 @@ function Get-AppDBTCountbyTier {
     {
         Write-AppDLog "$(MyInvocation.MyCommand)"
 
-        $c = New-AppDConnection
-
         if ($MyInvocation.MyCommand.ParameterSets -contains 'AppName')
         {
             $AppId = (Get-AppDApplication -AppName $AppName).id

@@ -27,7 +27,7 @@ function Get-AppDBTs {
     {
         Write-AppDLog "$(MyInvocation.MyCommand)"
 
-        $c = New-AppDConnection
+        $connectionInfo = New-AppDConnection
 
         if ($MyInvocation.MyCommand.ParameterSets -contains 'AppName') {
             $AppId = (Get-AppDApplication -AppName $AppName).id
@@ -40,8 +40,6 @@ function Get-AppDBTs {
     }
     Process
     {
-        $uri = "controller/api/accounts/$($c.accountId)/applications/$AppId/businesstransactions"
-        Write-Verbose $uri
-        Get-AppDResource -uri $uri
+        Get-AppDResource -uri "controller/api/accounts/$($connectionInfo.accountId)/applications/$AppId/businesstransactions" -connectionInfo $connectionInfo
     }
 }

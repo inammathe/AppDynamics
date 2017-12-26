@@ -33,23 +33,23 @@ function Get-AppDApplication
     Begin
     {
         Write-AppDLog "$(MyInvocation.MyCommand)"
-        $c = New-AppDConnection
+        $connectionInfo = New-AppDConnection
     }
     Process
     {
         switch ($MyInvocation.MyCommand.ParameterSets) {
             'AppId' {
                 foreach ($id in $AppId) {
-                    Get-AppDResource -uri "controller/api/accounts/$($c.accountID)/applications/$id"
+                    Get-AppDResource -uri "controller/api/accounts/$($connectionInfo.accountID)/applications/$id" -connectionInfo $connectionInfo
                 }
             }
             'AppName' {
                 foreach ($name in $AppName) {
-                    Get-AppDResource -uri "controller/api/accounts/$($c.accountID)/applications/$name"
+                    Get-AppDResource -uri "controller/api/accounts/$($connectionInfo.accountID)/applications/$name" -connectionInfo $connectionInfo
                 }
             }
             Default {
-                Get-AppDResource -uri "controller/api/accounts/$($c.accountID)/applications"
+                Get-AppDResource -uri "controller/api/accounts/$($connectionInfo.accountID)/applications" -connectionInfo $connectionInfo
             }
         }
     }

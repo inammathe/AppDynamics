@@ -27,8 +27,6 @@ function Get-AppDBTMetricPath
     Begin {
         Write-AppDLog "$(MyInvocation.MyCommand)"
 
-        $c = New-AppDConnection
-
         if ($MyInvocation.MyCommand.ParameterSets -contains 'AppName') {
             $AppId = (Get-AppDApplication -AppName $AppName).id
             if (!$AppId) {

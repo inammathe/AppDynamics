@@ -23,7 +23,7 @@ function Get-AppDNodes
     {
         Write-AppDLog "$(MyInvocation.MyCommand)"
 
-        $c = New-AppDConnection
+        $connectionInfo = New-AppDConnection
 
         if ($MyInvocation.MyCommand.ParameterSets -contains 'AppName') {
             $AppId = (Get-AppDApplication -AppName $AppName).id
@@ -36,6 +36,6 @@ function Get-AppDNodes
     }
     Process
     {
-        Get-AppDResource -uri "controller/api/accounts/$($c.accountId)/applications/$AppId/nodes"
+        Get-AppDResource -uri "controller/api/accounts/$($connectionInfo.accountId)/applications/$AppId/nodes" -connectionInfo $connectionInfo
     }
 }
