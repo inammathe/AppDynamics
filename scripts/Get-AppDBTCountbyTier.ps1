@@ -8,40 +8,39 @@
 function Get-AppDBTCountbyTier {
     [CmdletBinding()]
     param(
-        # Mandatory application ID.
-        [Parameter(Mandatory, Position = 0, Parametersetname='AppId')]
+        # Application ID.
+        [Parameter(Mandatory=$false,ValueFromPipeline)]
         $AppId,
 
-        # Use the name of the application if you do not know the AppId
-        [Parameter(Mandatory, Position = 0, ParameterSetName='AppName')]
+        # Use the name of the application if you do not know the AppId. Less efficient than using the ID
+        [Parameter(Mandatory=$false)]
         $AppName
     )
     Begin
     {
         Write-AppDLog "$($MyInvocation.MyCommand)"
-
-        if ($MyInvocation.MyCommand.ParameterSets -contains 'AppName')
-        {
-            $AppId = (Get-AppDApplication -AppName $AppName).id
-            if (!$AppId) {
-                $msg = "Failed to find application with application name: $AppName"
-                Write-AppDLog -Message $msg -Level 'Error'
-                Throw $msg
-            }
-        }
     }
     Process
     {
-
-        $BTs = Get-AppDBTs -AppId $AppId
+        if ($AppId) {
+            $BTs = Get-AppDBTs -AppId $AppId
+        }
+        elseif ($AppName)
+        {
+            $BTs = Get-AppDBTs -AppName $AppName
+        }
+        elseif (-not $AppId -and -not $AppName)
+        {
+            $BTs = Get-AppDBTs
+        }
 
         $total = 0
         $BTCounts = @()
-        foreach($tier in $BTs.bts.applicationComponentName | sort-object -Unique){
-            $total += ($BTs.bts.applicationComponentName | Where-Object {$_ -eq $tier}).Count
+        foreach($tier in $BTs.applicationComponentName | sort-object -Unique){
+            $total += ($BTs.applicationComponentName | Where-Object {$_ -eq $tier}).Count
             $BTCounts += [pscustomobject]@{
                 Tier = $tier
-                BTCount = ($BTs.bts.applicationComponentName | Where-Object {$_ -eq $tier}).Count
+                BTCount = ($BTs.applicationComponentName | Where-Object {$_ -eq $tier}).Count
             }
         }
         $BTCounts | Sort-Object BTCount -Descending

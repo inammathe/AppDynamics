@@ -33,11 +33,11 @@ function Get-AppDMetricData
     [CmdletBinding()]
     Param(
         # Mandatory application ID.
-        [Parameter(Mandatory, Position = 0, Parametersetname = 'AppId')]
+        [Parameter(Mandatory=$false, ValueFromPipeline)]
         $AppId,
 
         # Use the name of the application if you do not know the AppId
-        [Parameter(Mandatory, Position = 0, ParameterSetName = 'AppName')]
+        [Parameter(Mandatory=$false)]
         $AppName,
 
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
@@ -52,18 +52,22 @@ function Get-AppDMetricData
         Write-AppDLog "$($MyInvocation.MyCommand)"
 
         $connectionInfo = New-AppDConnection
-
-        if ($MyInvocation.MyCommand.ParameterSets -contains 'AppName') {
-            $AppId = (Get-AppDApplication -AppName $AppName).id
+    }
+    Process
+    {
+        # Get AppId if it is missing
+        if (!$AppId -and $AppName) {
+            $AppId = (Get-AppDApplication -AppId $AppName).Id
+        }
+        elseif (-not $AppId -and -not $AppName)
+        {
+            $AppId = (Get-AppDApplication).Id
             if (!$AppId) {
                 $msg = "Failed to find application with application name: $AppName"
                 Write-AppDLog -Message $msg -Level 'Error'
                 Throw $msg
             }
         }
-    }
-    Process
-    {
         $metricTypes = @("%7CAverage%20Response%20Time%20%28ms%29","%7CCalls%20per%20Minute","%7CErrors%20per%20Minute","%7CNumber%20of%20Slow%20Calls","%7CStall%20Count")
         $URLS =@()
         foreach ($path in $MetricPath) {

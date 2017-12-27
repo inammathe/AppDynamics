@@ -12,37 +12,38 @@ function Get-AppDBTMetricPath
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param(
-        # Mandatory application ID
-        [Parameter(Mandatory, Position = 0, ParameterSetName = 'AppId')]
+        # Mandatory application ID.
+        [Parameter(Mandatory=$false, ValueFromPipeline)]
         $AppId,
 
         # Use the name of the application if you do not know the AppId
-        [Parameter(Mandatory, Position = 0, ParameterSetName = 'AppName')]
+        [Parameter(Mandatory=$false)]
         $AppName,
 
         # Optional Id of a business transaction
-        [Parameter(Mandatory=$false, Position = 1)]
+        [Parameter(Mandatory=$false)]
         $BTId
     )
     Begin {
         Write-AppDLog "$($MyInvocation.MyCommand)"
-
-        if ($MyInvocation.MyCommand.ParameterSets -contains 'AppName') {
-            $AppId = (Get-AppDApplication -AppName $AppName).id
-            if (!$AppId) {
-                $msg = "Failed to find application with application name: $AppName"
-                Write-AppDLog -Message $msg -Level 'Error'
-                Throw $msg
-            }
-        }
     }
     Process
     {
+        # Get AppId if it is missing
+        if (!$AppId -and $AppName) {
+            $AppId = (Get-AppDApplication -AppId $AppName).Id
+        }
+        elseif (-not $AppId -and -not $AppName)
+        {
+            $AppId = (Get-AppDApplication).Id
+        }
+
+        # Get Business transactions
         if ($BTId) {
-            $BTs = (Get-AppDBTs -Appid $AppId).bts | Where-Object {$_.id -in $BTId}
+            $BTs = (Get-AppDBTs -Appid $AppId) | Where-Object {$_.id -in $BTId}
         }
         else {
-            $BTs = (Get-AppDBTs -Appid $AppId).bts
+            $BTs = (Get-AppDBTs -Appid $AppId)
         }
 
         if (!$BTs) {

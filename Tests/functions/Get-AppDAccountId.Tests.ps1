@@ -1,5 +1,4 @@
 $moduleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
-$mockDataLocation = "$moduleLocation\Tests\mock_data"
 $module = 'AppDynamics'
 
 Get-Module AppDynamics | Remove-Module
@@ -9,7 +8,6 @@ InModuleScope $module {
     $function = 'Get-AppDAccountId'
     Describe "$function Unit Tests" -Tag 'Unit' {
         Context "$function return value validation" {
-            $mockDataLocation = "$moduleLocation\Tests\mock_data"
             $env:AppDURL = 'mockURL'
             $env:AppDAuth = 'mockAuth'
             $env:AppDAccountID = $null

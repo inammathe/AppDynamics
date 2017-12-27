@@ -1,3 +1,4 @@
+# This can be used to manually kick off the pester tests without having to go through the pipeline
 try
 {
     $currentLocation = Split-Path -parent $MyInvocation.MyCommand.Path

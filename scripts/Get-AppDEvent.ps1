@@ -13,11 +13,11 @@ function Get-AppDEvent
     [CmdletBinding()]
     param(
         # Mandatory application ID.
-        [Parameter(Mandatory, Position = 0, Parametersetname = 'AppId')]
+        [Parameter(Mandatory=$false, ValueFromPipeline)]
         $AppId,
 
         # Use the name of the application if you do not know the AppId
-        [Parameter(Mandatory, Position = 0, ParameterSetName = 'AppName')]
+        [Parameter(Mandatory=$false)]
         $AppName,
 
         # How many days back to search. Ranges not yet supported by this cmdlet
@@ -35,20 +35,22 @@ function Get-AppDEvent
         Write-AppDLog "$($MyInvocation.MyCommand)"
 
         $connectionInfo = New-AppDConnection
-
-        if ($MyInvocation.MyCommand.ParameterSets -contains 'AppName') {
-            $AppId = (Get-AppDApplication -AppName $AppName).id
-            if (!$AppId) {
-                $msg = "Failed to find application with application name: $AppName"
-                Write-AppDLog -Message $msg -Level 'Error'
-                Throw $msg
-            }
-        }
     }
     Process
     {
         $daysAgoInMins = [MATH]::Round(((Get-Date) - ((Get-Date).AddDays(-$daysAgo))).TotalMinutes)
 
-        Get-AppDResource -uri "controller/rest/applications/$AppId/events?event-types=$eventType&severities=$severities&time-range-type=BEFORE_NOW&duration-in-mins=$daysAgoInMins&output=JSON" -connectionInfo $connectionInfo
+        # Get AppId if it is missing
+        if (!$AppId -and $AppName) {
+            $AppId = (Get-AppDApplication -AppId $AppName).Id
+        }
+        elseif (-not $AppId -and -not $AppName)
+        {
+            $AppId = (Get-AppDApplication).Id
+        }
+
+        foreach ($id in $AppId) {
+            Get-AppDResource -uri "controller/rest/applications/$id/events?event-types=$eventType&severities=$severities&time-range-type=BEFORE_NOW&duration-in-mins=$daysAgoInMins&output=JSON" -connectionInfo $connectionInfo
+        }
     }
 }
