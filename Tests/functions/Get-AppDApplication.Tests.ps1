@@ -11,26 +11,11 @@ InModuleScope $module {
             $env:AppDURL = 'mockURL'
             $env:AppDAuth = 'mockAuth'
             $env:AppDAccountID = 'mockAccountID'
+            $mockData = Import-CliXML -Path "$mockDataLocation\Get-AppDApplication.Mock"
 
             Mock Get-AppDResource -MockWith {
-                $mockData = Import-CliXML -Path "$mockDataLocation\Get-AppDApplication.Mock"
                 return $mockData
-            } -ParameterFilter {$AppId -eq $null -and $AppName -eq $null}
-
-            Mock Get-AppDResource -MockWith {
-                $mockData = Import-CliXML -Path "$mockDataLocation\Get-AppDApplication.Mock"
-                return $mockData
-            } -ParameterFilter {$AppId -eq '6' -and $AppName -eq $null}
-
-            Mock Get-AppDResource -MockWith {
-                $mockData = Import-CliXML -Path "$mockDataLocation\Get-AppDApplication.Mock"
-                return $mockData
-            } -ParameterFilter {$AppId -eq '9' -and $AppName -eq $null}
-
-            Mock Get-AppDResource -MockWith {
-                $mockData = Import-CliXML -Path "$mockDataLocation\Get-AppDApplication.Mock"
-                return $mockData
-            } -ParameterFilter {$AppId -eq '11' -and $AppName -eq $null}
+            }
 
             $ApplicationData = Get-AppDApplication
 
@@ -38,10 +23,10 @@ InModuleScope $module {
                 $ApplicationData | Should -not -BeNullOrEmpty
             }
             It "$function returns all aplications" {
-                $ApplicationData.count -eq 3 | Should -Be $true
+                $ApplicationData.count -eq $mockData.applications.count | Should -Be $true
             }
-            It "$function calls invoke-restmethod and is only invoked once" {
-                Assert-MockCalled -CommandName Get-AppDResource -Times 4 -Exactly
+            It "$function calls Get-AppDResource invoked exactly $(($mockData.applications.count + 1)) times" {
+                Assert-MockCalled -CommandName Get-AppDResource -Times ($mockData.applications.count + 1) -Exactly
             }
         }
     }
