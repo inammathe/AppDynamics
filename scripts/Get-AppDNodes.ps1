@@ -11,12 +11,12 @@ function Get-AppDNodes
     [CmdletBinding()]
     param
     (
-        # Optional application ID. Supply this to get details regarding specific application/s.
-        [Parameter(Mandatory = $false, ValueFromPipeline, Position = 0, ParameterSetName = 'AppId')]
+        # Mandatory application ID.
+        [Parameter(Mandatory=$false, ValueFromPipeline)]
         $AppId,
 
         # Use the name of the application if you do not know the AppId
-        [Parameter(Mandatory = $false, ValueFromPipeline, Position = 0, ParameterSetName = 'AppName')]
+        [Parameter(Mandatory=$false)]
         $AppName
     )
     Begin
@@ -24,18 +24,24 @@ function Get-AppDNodes
         Write-AppDLog "$($MyInvocation.MyCommand)"
 
         $connectionInfo = New-AppDConnection
-
-        if ($MyInvocation.MyCommand.ParameterSets -contains 'AppName') {
-            $AppId = (Get-AppDApplication -AppName $AppName).id
+    }
+    Process
+    {
+        # Get AppId if it is missing
+        if (!$AppId -and $AppName) {
+            $AppId = (Get-AppDApplication -AppId $AppName).Id
+        }
+        elseif (-not $AppId -and -not $AppName)
+        {
+            $AppId = (Get-AppDApplication).Id
             if (!$AppId) {
                 $msg = "Failed to find application with application name: $AppName"
                 Write-AppDLog -Message $msg -Level 'Error'
                 Throw $msg
             }
         }
-    }
-    Process
-    {
-        Get-AppDResource -uri "controller/api/accounts/$($connectionInfo.accountId)/applications/$AppId/nodes" -connectionInfo $connectionInfo
+        foreach ($id in $AppId) {
+            Get-AppDResource -uri "controller/api/accounts/$($connectionInfo.accountId)/applications/$id/nodes" -connectionInfo $connectionInfo
+        }
     }
 }

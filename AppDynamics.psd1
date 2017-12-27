@@ -4,14 +4,14 @@
 
     Author = 'Evan Lock <inammathe@gmail.com>'
 
-    CompanyName = 'contoso'
+    CompanyName = 'Contoso'
 
     ModuleVersion = '1.0'
 
     # Use the New-Guid command to generate a GUID, and copy/paste into the next line
     GUID = 'dae1f11c-68c4-4a54-ae40-3544b6157180'
 
-    Copyright = '2017 contoso'
+    Copyright = ''
 
     Description = 'This is a collection of useful functions to manage AppDynamics'
 

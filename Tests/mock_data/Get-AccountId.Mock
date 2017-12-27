@@ -1,0 +1,49 @@
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>System.Management.Automation.PSCustomObject</T>
+      <T>System.Object</T>
+    </TN>
+    <MS>
+      <S N="id">2</S>
+      <S N="name">customer1</S>
+      <Obj N="links" RefId="1">
+        <TN RefId="1">
+          <T>System.Object[]</T>
+          <T>System.Array</T>
+          <T>System.Object</T>
+        </TN>
+        <LST>
+          <Obj RefId="2">
+            <TNRef RefId="0" />
+            <MS>
+              <S N="href">http://appdynamics.contoso.com:8090/controller/api/accounts/2/apikey</S>
+              <S N="name">apikey</S>
+            </MS>
+          </Obj>
+          <Obj RefId="3">
+            <TNRef RefId="0" />
+            <MS>
+              <S N="href">http://appdynamics.contoso.com:8090/controller/api/accounts/2/licensemodules</S>
+              <S N="name">licensemodules</S>
+            </MS>
+          </Obj>
+          <Obj RefId="4">
+            <TNRef RefId="0" />
+            <MS>
+              <S N="href">http://appdynamics.contoso.com:8090/controller/api/accounts/2/users</S>
+              <S N="name">users</S>
+            </MS>
+          </Obj>
+          <Obj RefId="5">
+            <TNRef RefId="0" />
+            <MS>
+              <S N="href">http://appdynamics.contoso.com:8090/controller/api/accounts/2/applications</S>
+              <S N="name">applications</S>
+            </MS>
+          </Obj>
+        </LST>
+      </Obj>
+    </MS>
+  </Obj>
+</Objs>

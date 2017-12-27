@@ -2,7 +2,7 @@
 .SYNOPSIS
     Gets all business transaction details for a an application
 .DESCRIPTION
-    Gets all business transaction details for a an application
+    Gets all business transaction details for a an application.
 .EXAMPLE
     PS C:\> Get-AppDBTs -AppId 6
 
@@ -15,12 +15,12 @@
 function Get-AppDBTs {
     [CmdletBinding()]
     param(
-        # Mandatory application ID.
-        [Parameter(Mandatory, Position = 0, ParameterSetName='AppId')]
+        # Application ID.
+        [Parameter(Mandatory=$false,ValueFromPipeline)]
         $AppId,
 
-        # Use the name of the application if you do not know the AppId
-        [Parameter(Mandatory, Position = 0, ParameterSetName='AppName')]
+        # Use the name of the application if you do not know the AppId. Less efficient than using the ID
+        [Parameter(Mandatory=$false)]
         $AppName
     )
     Begin
@@ -28,18 +28,20 @@ function Get-AppDBTs {
         Write-AppDLog "$($MyInvocation.MyCommand)"
 
         $connectionInfo = New-AppDConnection
-
-        if ($MyInvocation.MyCommand.ParameterSets -contains 'AppName') {
-            $AppId = (Get-AppDApplication -AppName $AppName).id
-            if (!$AppId) {
-                $msg = "Failed to find application with application name: $AppName"
-                Write-AppDLog -Message $msg -Level 'Error'
-                Throw $msg
-            }
-        }
     }
     Process
     {
-        Get-AppDResource -uri "controller/api/accounts/$($connectionInfo.accountId)/applications/$AppId/businesstransactions" -connectionInfo $connectionInfo
+        # Get AppId if it is missing
+        if (!$AppId -and $AppName) {
+            $AppId = (Get-AppDApplication -AppId $AppName).Id
+        }
+        elseif (-not $AppId -and -not $AppName)
+        {
+            $AppId = (Get-AppDApplication).Id
+        }
+
+        foreach ($id in $AppId) {
+            (Get-AppDResource -uri "controller/api/accounts/$($connectionInfo.accountId)/applications/$id/businesstransactions" -connectionInfo $connectionInfo).bts
+        }
     }
 }

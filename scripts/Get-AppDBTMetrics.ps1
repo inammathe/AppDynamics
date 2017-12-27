@@ -23,7 +23,7 @@ function Get-AppDBTMetrics
     Process
     {
         $chosenApp = Get-AppDApplication | Out-GridView -PassThru
-        $chosenbusinessTrans = (Get-AppDBTs -appid ($chosenApp.Id)).bts | Out-GridView -PassThru
+        $chosenbusinessTrans = (Get-AppDBTs -appid ($chosenApp.Id)) | Out-GridView -PassThru
         if ($chosenbusinessTrans) {
             $MetricPaths = Get-AppDBTMetricPath -appId ($chosenApp.Id) -btId $chosenbusinessTrans.id
         }
