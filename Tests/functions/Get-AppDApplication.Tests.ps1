@@ -1,32 +1,88 @@
-$moduleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
-$module = 'AppDynamics'
+$Global:module = 'AppDynamics'
+$Global:function = ($MyInvocation.MyCommand.Name).Split('.')[0]
+$Global:moduleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
+$Global:mockDataLocation = "$moduleLocation\Tests\mock_data"
 
-Get-Module AppDynamics | Remove-Module
+Get-Module $module | Remove-Module
 Import-Module "$moduleLocation\$module.psd1"
 
 InModuleScope $module {
-    $function = 'Get-AppDApplication'
     Describe "$function Unit Tests" -Tag 'Unit' {
-        Context "$function return value validation. No Id. No Name." {
-            $env:AppDURL = 'mockURL'
-            $env:AppDAuth = 'mockAuth'
-            $env:AppDAccountID = 'mockAccountID'
-            $mockData = Import-CliXML -Path "$mockDataLocation\Get-AppDApplication.Mock"
+        Context "$function return value validation. (`$AppId -eq `$null, `$AppName -eq `$null)" {
+            # Prepare
+            Mock Write-AppDLog -Verifiable -MockWith {} -ParameterFilter {$message -eq $function}
 
-            Mock Get-AppDResource -MockWith {
-                return $mockData
+            Mock New-AppDConnection -MockWith {
+                $properties = [ordered]@{
+                    accountId = 'mockAccountId'
+                    header    = @{'Authorization' = 'mockAuth'}
+                }
+
+                return New-Object psobject -Property $properties
             }
 
-            $ApplicationData = Get-AppDApplication
+            $mockData_ALL = Import-CliXML -Path "$mockDataLocation\$function-ALL.Mock"
+            Mock Get-AppDResource -Verifiable -MockWith {
+                return $mockData_ALL
+            }
 
-            It "$function returns data that is not null or empty" {
-                $ApplicationData | Should -not -BeNullOrEmpty
+            # Act
+            $result = Get-AppDApplication
+
+            # Assert
+            It "Verifiable mocks are called" {
+                Assert-VerifiableMock
             }
-            It "$function returns all aplications" {
-                $ApplicationData.count -eq $mockData.applications.count | Should -Be $true
+            It "Returns a value" {
+                $result | Should -not -BeNullOrEmpty
             }
-            It "$function calls Get-AppDResource invoked exactly $(($mockData.applications.count + 1)) times" {
-                Assert-MockCalled -CommandName Get-AppDResource -Times ($mockData.applications.count + 1) -Exactly
+            It "Returns all aplications" {
+                $result.count -eq $mockData_ALL.applications.count | Should -Be $true
+            }
+            It "Calls Get-AppDResource exactly $(($mockData_ALL.applications.count + 1)) times" {
+                Assert-MockCalled -CommandName Get-AppDResource -Times ($mockData_ALL.applications.count + 1) -Exactly
+            }
+            It "Calls New-AppDConnection exactly 1 time" {
+                Assert-MockCalled -CommandName New-AppDConnection -Times 1 -Exactly
+            }
+        }
+
+        Context "$function return value validation (`$AppId -eq 6, `$AppName -eq `$null)" {
+            # Prepare
+            Mock Write-AppDLog -Verifiable -MockWith {} -ParameterFilter {$message -eq $function}
+
+            Mock New-AppDConnection -MockWith {
+                $properties = [ordered]@{
+                    accountId = 'mockAccountId'
+                    header    = @{'Authorization' = 'mockAuth'}
+                }
+
+                return New-Object psobject -Property $properties
+            }
+
+            $mockData_ID6 = Import-CliXML -Path "$mockDataLocation\$function-ID_6.Mock"
+            Mock Get-AppDResource -Verifiable -MockWith {
+                return $mockData_ID6
+            } -ParameterFilter {$uri -eq "controller/api/accounts/mockAccountId/applications/6"}
+
+            # Act
+            $result = Get-AppDApplication -AppId 6
+
+            # Assert
+            It "Verifiable mocks are called" {
+                Assert-VerifiableMock
+            }
+            It "Returns a value" {
+                $result | Should -not -BeNullOrEmpty
+            }
+            It "Returns all aplications (count -eq $($mockData_ID6.applications.count))" {
+                $result.applications.count -eq $mockData_ID6.applications.count | Should -Be $true
+            }
+            It "Calls New-AppDConnection exactly 1 time" {
+                Assert-MockCalled -CommandName New-AppDConnection -Times 1 -Exactly
+            }
+            It "Calls Get-AppDResource exactly 1 time" {
+                Assert-MockCalled -CommandName Get-AppDResource -Times 1 -Exactly
             }
         }
     }
