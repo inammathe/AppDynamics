@@ -72,7 +72,7 @@ function Get-AppDMetricData
         $URLS =@()
         foreach ($path in $MetricPath) {
             foreach ($type in $metricTypes) {
-                $URLS += $baseUrl + $Appname + '/metric-data?metric-path=Business%20Transaction%20Performance%7CBusiness%20Transactions%7C' + $path + $type + "&time-range-type=BEFORE_NOW&duration-in-mins=$MinsAgo"
+                $URLS +=  "controller/rest/applications/6/metric-data?metric-path=Business%20Transaction%20Performance%7CBusiness%20Transactions%7C" + $path + $type + "&time-range-type=BEFORE_NOW&duration-in-mins=$MinsAgo"
             }
         }
         $URLS = $URLS.Replace(' ','%20')
@@ -88,7 +88,7 @@ function Get-AppDMetricData
                 metricPath = $response.'metric-datas'.'metric-data'.metricPath
                 metricName = $response.'metric-datas'.'metric-data'.metricName
                 frequency = $response.'metric-datas'.'metric-data'.frequency
-                startTime = [timezone]::CurrentTimeZone.ToLocalTime(([datetime]'1/1/1970').AddMilliseconds(($r.'metric-datas'.'metric-data'.metricValues.'metric-value'.startTimeInMillis)))
+                startTime = [timezone]::CurrentTimeZone.ToLocalTime(([datetime]'1/1/1970').AddMilliseconds(($response.'metric-datas'.'metric-data'.metricValues.'metric-value'.startTimeInMillis)))
                 value  = $response.'metric-datas'.'metric-data'.metricValues.'metric-value'.value
                 min  = $response.'metric-datas'.'metric-data'.metricValues.'metric-value'.min
                 max  = $response.'metric-datas'.'metric-data'.metricValues.'metric-value'.max
@@ -98,7 +98,6 @@ function Get-AppDMetricData
                 standardDeviation  = $response.'metric-datas'.'metric-data'.metricValues.'metric-value'.standardDeviation
                 occurrences  = $response.'metric-datas'.'metric-data'.metricValues.'metric-value'.occurrences
                 useRange  = $response.'metric-datas'.'metric-data'.metricValues.'metric-value'.useRange
-                restURL = $url
             }
         }
     }
