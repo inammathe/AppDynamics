@@ -17,7 +17,7 @@ InModuleScope $module {
                 accountId = $env:AppDAccountID
                 header    = @{'Authorization' = $env:AppDAuth}
             }
-            Mock Write-AppDLog -MockWith {} -ParameterFilter {$message -eq $function}
+            Mock Write-AppDLog -Verifiable -MockWith {} -ParameterFilter {$message -eq $function}
 
             # Act
             $result = New-AppDConnection
