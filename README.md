@@ -32,7 +32,7 @@ Example Use
 ```
 Import-Module '.\AppDynamics.psd1'
 
-# Set Connection information
+# Set Connection information - Highly recommend you add this to your profile to save you having to do it every time.
 Set-AppDynamicsConnectionInfo -URL "http://MyAppDynamics.AwesomeCompany.com"
 
 # Get all Applications
