@@ -11,10 +11,22 @@ function Get-AppDBTMetrics
     [CmdletBinding()]
     param
     (
-        # Parameter help description
-        [Parameter(Mandatory=$false)]
+        # Use a gui
+        [Parameter(Mandatory=$true, Position=0, ParameterSetName='Interactive')]
         [switch]
-        $Interactive
+        $Interactive,
+
+        # Use a gui
+        [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'Auto')]
+        $AppId,
+
+        [Parameter(Mandatory = $false)]
+        $BTId,
+
+        # Export CSV
+        [Parameter(Mandatory = $false)]
+        [switch]
+        $ExportCSV
     )
     Begin
     {
@@ -22,16 +34,31 @@ function Get-AppDBTMetrics
     }
     Process
     {
-        $chosenApp = Get-AppDApplication | Out-GridView -PassThru
-        $chosenbusinessTrans = (Get-AppDBTs -appid ($chosenApp.Id)) | Out-GridView -PassThru
-        if ($chosenbusinessTrans) {
-            $MetricPaths = Get-AppDBTMetricPath -appId ($chosenApp.Id) -btId $chosenbusinessTrans.id
+        switch ($PSCmdlet.ParameterSetName) {
+            'Interactive' {
+                $chosenApp = Get-AppDApplication | Out-GridView -PassThru
+                $chosenbusinessTrans = (Get-AppDBTs -Appid ($chosenApp.Id)) | Out-GridView -PassThru
+                if ($chosenbusinessTrans) {
+                    $MetricPaths = Get-AppDBTMetricPath -AppID ($chosenApp.Id) -BtId $chosenbusinessTrans.Id
+                } else {
+                    $MetricPaths = Get-AppDBTMetricPath -AppID ($chosenApp.Id)
+                }
+                $MetricData = Get-AppDMetricData -MetricPath $MetricPaths -AppId $chosenApp.Id
+                $MetricData | Out-GridView
+              }
+            'Auto' {
+                $chosenApp = Get-AppDApplication -AppId $AppId
+                if($BTId) {
+                    $MetricPaths = Get-AppDBTMetricPath -AppId $AppId -BtId $BTId
+                } else {
+                    $MetricPaths = Get-AppDBTMetricPath -AppID $AppId
+                }
+                $MetricData = Get-AppDMetricData -MetricPath $MetricPaths -AppId $AppId
+            }
         }
-        else {
-            $MetricPaths = Get-AppDBTMetricPath -appId ($chosenApp.Id)
+
+        if ($ExportCSV) {
+            $MetricData | Export-Csv -NoTypeInformation ".\$($chosenApp.name)-$((Get-Date -Format 'dd-MM-yy')).csv"
         }
-        $MetricData = Get-AppDMetricData -MetricPath $MetricPaths -AppName $chosenApp.name
-        $MetricData | Export-Csv -NoTypeInformation ".\$($chosenApp.name)-$((Get-Date -Format 'dd-MM-yy')).csv"
-        $MetricData | Out-GridView
     }
 }
