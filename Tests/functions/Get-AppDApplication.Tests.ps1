@@ -21,7 +21,7 @@ InModuleScope $module {
                 return New-Object psobject -Property $properties
             }
 
-            $mockData_ALL = Import-CliXML -Path "$mockDataLocation\$function-ALL.Mock"
+            $mockData_ALL = Import-CliXML -Path "$mockDataLocation\$function.Mock"
             Mock Get-AppDResource -Verifiable -MockWith {
                 return $mockData_ALL
             }
@@ -47,7 +47,7 @@ InModuleScope $module {
             }
         }
 
-        Context "$function return value validation (`$AppId -eq 6, `$AppName -eq `$null)" {
+        Context "$function return value validation (`$AppId -eq 1, `$AppName -eq `$null)" {
             # Prepare
             Mock Write-AppDLog -Verifiable -MockWith {} -ParameterFilter {$message -eq $function}
 
@@ -60,13 +60,13 @@ InModuleScope $module {
                 return New-Object psobject -Property $properties
             }
 
-            $mockData_ID6 = Import-CliXML -Path "$mockDataLocation\$function-ID_6.Mock"
+            $mockData_ID1 = Import-CliXML -Path "$mockDataLocation\$function.Mock" | Where-Object {$_.applications.Id -eq 1}
             Mock Get-AppDResource -Verifiable -MockWith {
-                return $mockData_ID6
-            } -ParameterFilter {$uri -eq "controller/api/accounts/mockAccountId/applications/6"}
+                return $mockData_ID1
+            } -ParameterFilter {$uri -eq "controller/api/accounts/mockAccountId/applications/1"}
 
             # Act
-            $result = Get-AppDApplication -AppId 6
+            $result = Get-AppDApplication -AppId 1
 
             # Assert
             It "Verifiable mocks are called" {
@@ -75,8 +75,8 @@ InModuleScope $module {
             It "Returns a value" {
                 $result | Should -not -BeNullOrEmpty
             }
-            It "Returns all aplications (count -eq $($mockData_ID6.applications.count))" {
-                $result.applications.count -eq $mockData_ID6.applications.count | Should -Be $true
+            It "Returns all aplications (count -eq $($mockData_ID1.applications.count))" {
+                $result.applications.count -eq $mockData_ID1.applications.count | Should -Be $true
             }
             It "Calls New-AppDConnection exactly 1 time" {
                 Assert-MockCalled -CommandName New-AppDConnection -Times 1 -Exactly

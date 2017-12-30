@@ -11,33 +11,38 @@ InModuleScope $module {
         Context "$function return value validation" {
             # Prepare
             $URL = 'http://mockUrl.com'
-            $Username = 'mockUsername'
+            $Username = 'mockUsername@customer1'
             $Password = 'mockPassword'
             $AccountID = 'mockId'
-            Mock Write-AppDLog -Verifiable -MockWith {} -ParameterFilter {$message -eq $function}
+            $Auth = ('Basic ' + [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($UserName + ":" + $Password )))
+
+            Mock Write-AppDLog -Verifiable -MockWith {} -ParameterFilter {$message -eq "$function`tURL: $URL"}
             Mock Get-AppDAccountId -Verifiable -MockWith {
                 return $AccountID
             }
 
             # Act
-            $result = Set-AppDConnectionInfo -URL $URL
+            $result = Set-AppDConnectionInfo -URL $URL -Username $Username -Password $Password
 
             # Assert
-            #It "Verifiable mocks are called" {
-                #Assert-VerifiableMock
-            #}
+            It "Verifiable mocks are called" {
+                Assert-VerifiableMock
+            }
             It "Returns a value" {
                 $result | Should -not -BeNullOrEmpty
             }
             It "Returns the expected value" {
-                $result | Should -not -BeNullOrEmpty
+                $result.AppDURL -eq $URL | Should -Be $true
+                $result.AppDAuth -eq $Auth | Should -Be $true
+                $result.AppDAccountId -eq $AccountID | Should -Be $true
             }
-            #It "Returns the expected type" {
-                #$result -is [string] | Should -Be $true
-            #}
-            #It "Calls New-AppDConnection and is only invoked once" {
-                #Assert-MockCalled -CommandName New-AppDConnection -Times 1 -Exactly
-            #}
+            It "Returns the expected type" {
+                $result -is [psobject] | Should -Be $true
+            }
+            It "Calls mocks the correct amount of times" {
+                Assert-MockCalled -CommandName Write-AppDLog -Times 1 -Exactly
+                Assert-MockCalled -CommandName Get-AppDAccountId -Times 1 -Exactly
+            }
         }
     }
 }
