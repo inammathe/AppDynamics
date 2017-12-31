@@ -1,14 +1,14 @@
-$Global:module = 'AppDynamics'
-$Global:function = ($MyInvocation.MyCommand.Name).Split('.')[0]
-$Global:moduleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
-$Global:mockDataLocation = "$moduleLocation\Tests\mock_data"
+$Global:AppDModule = 'AppDynamics'
+$Global:AppDFunction = ($MyInvocation.MyCommand.Name).Split('.')[0]
+$Global:AppDModuleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
+$Global:AppDMockDataLocation = "$moduleLocation\Tests\mock_data"
 
-Get-Module $module | Remove-Module
+Get-Module $module | Remove-Module -ErrorAction SilentlyContinue
 Import-Module "$moduleLocation\$module.psd1"
 
 InModuleScope $module {
-    Describe "$function Unit Tests" -Tag 'Unit' {
-        Context "$function return value validation" {
+    Describe "FunctionName Unit Tests" -Tag 'Unit' {
+        Context "$AppDFunction return value validation" {
             # Prepare
             Mock New-AppDConnection -MockWith {
                 $properties = [ordered]@{

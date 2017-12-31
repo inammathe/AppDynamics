@@ -1,16 +1,16 @@
-$Global:module = 'AppDynamics'
-$Global:function = ($MyInvocation.MyCommand.Name).Split('.')[0]
-$Global:moduleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
-$Global:mockDataLocation = "$moduleLocation\Tests\mock_data"
+$Global:AppDModule = 'AppDynamics'
+$Global:AppDFunction = ($MyInvocation.MyCommand.Name).Split('.')[0]
+$Global:AppDModuleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
+$Global:AppDMockDataLocation = "$AppDModuleLocation\Tests\mock_data"
 
-Get-Module $module | Remove-Module
-Import-Module "$moduleLocation\$module.psd1"
+Get-Module $AppDModule | Remove-Module -ErrorAction SilentlyContinue
+Import-Module "$AppDModuleLocation\$AppDModule.psd1"
 
-InModuleScope $module {
-    Describe "$function Unit Tests" -Tag 'Unit' {
-        Context "$function return value validation. (`$AppId -eq `$null, `$AppName -eq `$null)" {
+InModuleScope $AppDModule {
+    Describe "Get-AppDApplication Unit Tests" -Tag 'Unit' {
+        Context "$AppDFunction return value validation. (`$AppId -eq `$null, `$AppName -eq `$null)" {
             # Prepare
-            Mock Write-AppDLog -Verifiable -MockWith {} -ParameterFilter {$message -eq $function}
+            Mock Write-AppDLog -Verifiable -MockWith {} -ParameterFilter {$message -eq $AppDFunction}
 
             Mock New-AppDConnection -MockWith {
                 $properties = [ordered]@{
@@ -21,7 +21,7 @@ InModuleScope $module {
                 return New-Object psobject -Property $properties
             }
 
-            $mockData_ALL = Import-CliXML -Path "$mockDataLocation\$function.Mock"
+            $mockData_ALL = Import-CliXML -Path "$AppDMockDataLocation\$AppDFunction.Mock"
             Mock Get-AppDResource -Verifiable -MockWith {
                 return $mockData_ALL
             }
@@ -47,9 +47,9 @@ InModuleScope $module {
             }
         }
 
-        Context "$function return value validation (`$AppId -eq 1, `$AppName -eq `$null)" {
+        Context "$AppDFunction return value validation (`$AppId -eq 1, `$AppName -eq `$null)" {
             # Prepare
-            Mock Write-AppDLog -Verifiable -MockWith {} -ParameterFilter {$message -eq $function}
+            Mock Write-AppDLog -Verifiable -MockWith {} -ParameterFilter {$message -eq $AppDFunction}
 
             Mock New-AppDConnection -MockWith {
                 $properties = [ordered]@{
@@ -60,7 +60,7 @@ InModuleScope $module {
                 return New-Object psobject -Property $properties
             }
 
-            $mockData_ID1 = Import-CliXML -Path "$mockDataLocation\$function.Mock" | Where-Object {$_.applications.Id -eq 1}
+            $mockData_ID1 = Import-CliXML -Path "$AppDMockDataLocation\$AppDFunction.Mock" | Where-Object {$_.applications.Id -eq 1}
             Mock Get-AppDResource -Verifiable -MockWith {
                 return $mockData_ID1
             } -ParameterFilter {$uri -eq "controller/api/accounts/mockAccountId/applications/1"}

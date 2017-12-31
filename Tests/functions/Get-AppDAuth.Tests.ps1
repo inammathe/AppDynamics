@@ -1,19 +1,19 @@
-$Global:module = 'AppDynamics'
-$Global:function = ($MyInvocation.MyCommand.Name).Split('.')[0]
-$Global:moduleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
-$Global:mockDataLocation = "$moduleLocation\Tests\mock_data"
+$Global:AppDModule = 'AppDynamics'
+$Global:AppDFunction = ($MyInvocation.MyCommand.Name).Split('.')[0]
+$Global:AppDModuleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
+$Global:AppDMockDataLocation = "$moduleLocation\Tests\mock_data"
 
-Get-Module $module | Remove-Module
-Import-Module "$moduleLocation\$module.psd1"
+Get-Module $AppDModule | Remove-Module -ErrorAction SilentlyContinue
+Import-Module "$AppDModuleLocation\$AppDModule.psd1"
 
-InModuleScope $module {
-    Describe "$function Unit Tests" -Tag 'Unit' {
-        Context "$function return value validation (`$UserName -eq 'guest@customer1', `$Password -eq 'guest')" {
+InModuleScope $AppDModule {
+    Describe "Get-AppDAuth Unit Tests" -Tag 'Unit' {
+        Context "$AppDFunction return value validation (`$UserName -eq 'guest@customer1', `$Password -eq 'guest')" {
             # Prepare
             $UserName = 'guest@customer1'
             $Password = 'guest'
             $AuthString = ('Basic ' + [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($UserName + ":" + $Password )))
-            Mock Write-AppDLog -MockWith {} -ParameterFilter {$message -eq $function}
+            Mock Write-AppDLog -MockWith {} -ParameterFilter {$message -eq $AppDFunction}
 
             # Act
             $mockData = Get-AppDAuth
@@ -33,14 +33,14 @@ InModuleScope $module {
             }
         }
 
-        Context "$function return value validation (`$UserName -eq `mockUserName, `$Password -eq `mockPassword)" {
+        Context "$AppDFunction return value validation (`$UserName -eq `mockUserName, `$Password -eq `mockPassword)" {
             # Prepare
             $UserName = 'mockUserName'
             $Password = 'mockPassword'
             $AuthString = ('Basic ' + [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($UserName + '@customer1' + ':' + $Password )))
 
 
-            Mock Write-AppDLog -MockWith {} -ParameterFilter {$message -eq $function}
+            Mock Write-AppDLog -MockWith {} -ParameterFilter {$message -eq $AppDFunction}
 
             # Act
             $result = Get-AppDAuth -UserName $UserName -Password $Password

@@ -1,18 +1,18 @@
-$Global:module = 'AppDynamics'
-$Global:function = ($MyInvocation.MyCommand.Name).Split('.')[0]
-$Global:moduleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
-$Global:mockDataLocation = "$moduleLocation\Tests\mock_data"
+$Global:AppDModule = 'AppDynamics'
+$Global:AppDFunction = ($MyInvocation.MyCommand.Name).Split('.')[0]
+$Global:AppDModuleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
+$Global:AppDMockDataLocation = "$AppDModuleLocation\Tests\mock_data"
 
-Get-Module $module | Remove-Module
-Import-Module "$moduleLocation\$module.psd1"
+Get-Module $AppDModule | Remove-Module -ErrorAction SilentlyContinue
+Import-Module "$AppDModuleLocation\$AppDModule.psd1"
 
-InModuleScope $module {
-    Describe "$function Unit Tests" -Tag 'Unit' {
-        Context "$function return value validation (`$AppId -eq `$null, `$AppName -eq `$null)" {
+InModuleScope $AppDModule {
+    Describe "Get-AppDBTCountbyTier Unit Tests" -Tag 'Unit' {
+        Context "$AppDFunction return value validation (`$AppId -eq `$null, `$AppName -eq `$null)" {
             # Prepare
-            Mock Write-AppDLog -MockWith {} -ParameterFilter {$message -eq $function}
+            Mock Write-AppDLog -MockWith {} -ParameterFilter {$message -eq $AppDFunction}
 
-            $mockData = Import-CliXML -Path "$mockDataLocation\Get-AppDBTs.Mock"
+            $mockData = Import-CliXML -Path "$AppDMockDataLocation\Get-AppDBTs.Mock"
             Mock Get-AppDBTs -Verifiable -MockWith {
                 return $mockData
             }
