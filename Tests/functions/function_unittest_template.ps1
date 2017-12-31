@@ -1,12 +1,12 @@
 $Global:AppDModule = 'AppDynamics'
 $Global:AppDFunction = ($MyInvocation.MyCommand.Name).Split('.')[0]
 $Global:AppDModuleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
-$Global:AppDMockDataLocation = "$moduleLocation\Tests\mock_data"
+$Global:AppDMockDataLocation = "$AppDModuleLocation\Tests\mock_data"
 
-Get-Module $module | Remove-Module
-Import-Module "$moduleLocation\$module.psd1"
+Get-Module $AppDModule | Remove-Module
+Import-Module "$AppDModuleLocation\$AppDModule.psd1"
 
-InModuleScope $module {
+InModuleScope $AppDModule {
     Describe "FunctionName Unit Tests" -Tag 'Unit' {
         Context "$AppDFunction return value validation" {
             # Prepare

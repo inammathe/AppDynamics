@@ -29,7 +29,7 @@ InModuleScope $AppDModule {
             Add-Type -AssemblyName System.Web
             $expectedResult = @()
             foreach ($bt in $mockBTData) {
-                $expectedResult += [System.Web.HttpUtility]::UrlEncode("$($bt.applicationComponentName)|$($bt.internalName)")
+                $expectedResult += [System.Net.WebUtility]::UrlEncode("$($bt.applicationComponentName)|$($bt.internalName)")
             }
             It "Verifiable mocks are called" {
                 Assert-VerifiableMock
