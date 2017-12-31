@@ -3,7 +3,7 @@ $Global:AppDFunction = ($MyInvocation.MyCommand.Name).Split('.')[0]
 $Global:AppDModuleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
 $Global:AppDMockDataLocation = "$moduleLocation\Tests\mock_data"
 
-Get-Module $module | Remove-Module -ErrorAction SilentlyContinue
+Get-Module $module | Remove-Module
 Import-Module "$moduleLocation\$module.psd1"
 
 InModuleScope $module {
