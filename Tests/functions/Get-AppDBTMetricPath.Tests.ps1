@@ -26,7 +26,6 @@ InModuleScope $AppDModule {
             $result = Get-AppDBTMetricPath
 
             # Assert
-            Add-Type -AssemblyName System.Web
             $expectedResult = @()
             foreach ($bt in $mockBTData) {
                 $expectedResult += [System.Net.WebUtility]::UrlEncode("$($bt.applicationComponentName)|$($bt.internalName)")

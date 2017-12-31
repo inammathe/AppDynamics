@@ -53,7 +53,7 @@ function Get-AppDBTMetricPath
         }
 
         foreach ($bt in $BTs) {
-            $MetricPath = [System.Web.HttpUtility]::UrlEncode("$($bt.applicationComponentName)|$($bt.internalName)")
+            $MetricPath = [System.Net.WebUtility]::UrlEncode("$($bt.applicationComponentName)|$($bt.internalName)")
             Write-Output $MetricPath
         }
     }
