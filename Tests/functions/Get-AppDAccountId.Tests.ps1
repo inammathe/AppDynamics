@@ -1,10 +1,10 @@
-$Global:module = 'AppDynamics'
-$Global:function = ($MyInvocation.MyCommand.Name).Split('.')[0]
-$Global:moduleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
-$Global:mockDataLocation = "$moduleLocation\Tests\mock_data"
+$Global:AppDModule = 'AppDynamics'
+$Global:AppDFunction = ($MyInvocation.MyCommand.Name).Split('.')[0]
+$Global:AppDModuleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
+$Global:AppDMockDataLocation = "$AppDModuleLocation\Tests\mock_data"
 
 Get-Module AppDynamics | Remove-Module
-Import-Module "$moduleLocation\$module.psd1"
+Import-Module "$AppDModuleLocation\AppDynamics.psd1"
 
 InModuleScope $module {
     Describe "$function Unit Tests" -Tag 'Unit' {
@@ -15,7 +15,7 @@ InModuleScope $module {
             $env:AppDAccountID = $null
 
             Mock Invoke-RestMethod -MockWith {
-                $mockData = Import-CliXML -Path "$mockDataLocation\Get-AccountId.Mock"
+                $mockData = Import-CliXML -Path "$AppDMockDataLocation\Get-AccountId.Mock"
                 return $mockData
             }
             # Act
