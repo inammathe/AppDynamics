@@ -3,7 +3,7 @@ $Global:AppDFunction = ($MyInvocation.MyCommand.Name).Split('.')[0]
 $Global:AppDModuleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
 $Global:AppDMockDataLocation = "$AppDModuleLocation\Tests\mock_data"
 
-Get-Module $AppDModule | Remove-Module -ErrorAction SilentlyContinue
+Get-Module $AppDModule | Remove-Module
 Import-Module "$AppDModuleLocation\$AppDModule.psd1"
 
 InModuleScope $AppDModule {
@@ -26,6 +26,7 @@ InModuleScope $AppDModule {
             $result = Get-AppDBTMetricPath
 
             # Assert
+            Add-Type -AssemblyName System.Web
             $expectedResult = @()
             foreach ($bt in $mockBTData) {
                 $expectedResult += [System.Web.HttpUtility]::UrlEncode("$($bt.applicationComponentName)|$($bt.internalName)")
