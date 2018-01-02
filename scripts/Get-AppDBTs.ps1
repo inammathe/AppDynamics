@@ -33,7 +33,7 @@ function Get-AppDBTs {
     {
         # Get AppId if it is missing
         if (!$AppId -and $AppName) {
-            $AppId = (Get-AppDApplication -AppId $AppName).Id
+            $AppId = (Get-AppDApplication -AppName $AppName).Id
         }
         elseif (-not $AppId -and -not $AppName)
         {

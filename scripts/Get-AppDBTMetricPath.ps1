@@ -31,7 +31,7 @@ function Get-AppDBTMetricPath
     {
         # Get AppId if it is missing
         if (!$AppId -and $AppName) {
-            $AppId = (Get-AppDApplication -AppId $AppName).Id
+            $AppId = (Get-AppDApplication -AppName $AppName).Id
         }
         elseif (-not $AppId -and -not $AppName)
         {
@@ -53,7 +53,7 @@ function Get-AppDBTMetricPath
         }
 
         foreach ($bt in $BTs) {
-            $MetricPath = [System.Web.HttpUtility]::UrlEncode("$($bt.applicationComponentName)|$($bt.internalName)")
+            $MetricPath = [System.Net.WebUtility]::UrlEncode("$($bt.applicationComponentName)|$($bt.internalName)")
             Write-Output $MetricPath
         }
     }

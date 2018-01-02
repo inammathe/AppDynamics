@@ -1,34 +1,37 @@
-$moduleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
-$Global:mockDataLocation = "$moduleLocation\Tests\mock_data"
-$module = 'AppDynamics'
+$Global:AppDModule = 'AppDynamics'
+$Global:AppDFunction = ($MyInvocation.MyCommand.Name).Split('.')[0]
+$Global:AppDModuleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.parent.FullName
+$Global:AppDMockDataLocation = "$AppDModuleLocation\Tests\mock_data"
 
-Get-Module AppDynamics | Remove-Module
-Import-Module "$moduleLocation\$module.psd1"
+Get-Module $AppDModule | Remove-Module
+Import-Module "$AppDModuleLocation\$AppDModule.psd1"
 
-InModuleScope $module {
-    $function = 'Get-AppDAccountId'
-    Describe "$function Unit Tests" -Tag 'Unit' {
-        Context "$function return value validation" {
+InModuleScope $AppDModule {
+    Describe "Get-AppDAccountId Unit Tests" -Tag 'Unit' {
+        Context "$AppDFunction return value validation" {
+            # Prepare
             $env:AppDURL = 'mockURL'
             $env:AppDAuth = 'mockAuth'
             $env:AppDAccountID = $null
 
             Mock Invoke-RestMethod -MockWith {
-                $mockData = Import-CliXML -Path "$mockDataLocation\Get-AccountId.Mock"
+                $mockData = Import-CliXML -Path "$AppDMockDataLocation\Get-AccountId.Mock"
                 return $mockData
             }
-            $AccountId = Get-AppDAccountId
+            # Act
+            $result = Get-AppDAccountId
 
-            It "$function returns an id that is not null or empty" {
-                $AccountId | Should -not -BeNullOrEmpty
+            # Assert
+            It "Returns an id that is not null or empty" {
+                $result | Should -not -BeNullOrEmpty
             }
-            It "$function returns an id that is a string" {
-                $AccountId -is [string] | Should -Be $true
+            It "Returns an id that is a string" {
+                $result -is [string] | Should -Be $true
             }
-            It "$function returns an id that is greater than 0" {
-                [int]$AccountId -ge 0 | Should -Be $true
+            It "Returns an id that is greater than 0" {
+                [int]$result -ge 0 | Should -Be $true
             }
-            It "$function calls invoke-restmethod and is only invoked once" {
+            It "Calls invoke-restmethod and is only invoked once" {
                 Assert-MockCalled -CommandName Invoke-RestMethod -Times 1 -Exactly
             }
         }

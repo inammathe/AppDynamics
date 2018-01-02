@@ -27,7 +27,7 @@ function Get-AppDEvent
         $eventType = 'APPLICATION_DEPLOYMENT',
 
         # Severity of the event
-        [ValidateSet('INFO','WARN','ERROR',"INFO,WARN,ERROR", ignorecase=$False)]
+        [ValidateSet('INFO','WARN','ERROR', ignorecase=$False)]
         $severities = 'INFO,WARN,ERROR'
     )
     Begin
@@ -42,7 +42,7 @@ function Get-AppDEvent
 
         # Get AppId if it is missing
         if (!$AppId -and $AppName) {
-            $AppId = (Get-AppDApplication -AppId $AppName).Id
+            $AppId = (Get-AppDApplication -AppName $AppName).Id
         }
         elseif (-not $AppId -and -not $AppName)
         {
