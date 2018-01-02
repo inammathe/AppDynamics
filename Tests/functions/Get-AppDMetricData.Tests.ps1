@@ -7,7 +7,7 @@ Get-Module $AppDModule | Remove-Module
 Import-Module "$AppDModuleLocation\$AppDModule.psd1"
 
 InModuleScope $AppDModule {
-    Describe "FunctionName Unit Tests" -Tag 'Unit' {
+    Describe "Get-AppDMetricData Unit Tests" -Tag 'Unit' {
         Context "$AppDFunction return value validation" {
             # Prepare
             Mock Write-AppDLog -Verifiable -MockWith {} -ParameterFilter {$message -eq $AppDFunction}
@@ -21,8 +21,22 @@ InModuleScope $AppDModule {
                 return New-Object psobject -Property $properties
             }
 
+            #Get-AppDApplication mock
+            $mockAppData = Import-CliXML -Path "$AppDMockDataLocation\Get-AppDApplication.Mock"
+            Mock Get-AppDApplication -Verifiable -MockWith {
+                return $mockAppData
+            }
+
+            #Get-AppDBTMetricPath mock
+            $mockBTMetricPaths = Import-CliXML -Path "$AppDMockDataLocation\Get-AppDMetricPath.Mock"
+
+            $mockMetricData = Import-CliXML -Path "$AppDMockDataLocation\Get-AppDMetricData.Mock"
+            Mock Get-AppDResource -Verifiable -MockWith {
+                return $mockMetricData
+            }
+
             # Act
-            $result = Get-AppDApplication
+            $result = Get-AppDMetricData -MetricPath $mockBTMetricPaths
 
             # Assert
             It "Verifiable mocks are called" {

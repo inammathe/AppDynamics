@@ -1,5 +1,6 @@
 $moduleLocation = (Get-Item (Split-Path -parent $MyInvocation.MyCommand.Path)).parent.FullName
 $scriptLocation = "$moduleLocation\Scripts"
+$functionsTestLocation = "$moduleLocation\Tests\functions"
 $module = 'AppDynamics'
 
 Describe "$module Module Tests" {
@@ -67,11 +68,11 @@ Describe "$module Module Tests" {
                 }
             }
 
-            <#Context "$function has tests" {
+            Context "$function has tests" {
                 It "$function.Tests.ps1 should exist" {
-                    "$function.Tests.ps1" | Should -Exist
+                    "$functionsTestLocation\$function.Tests.ps1" | Should -Exist
                 }
-            }#>
+            }
         }
     }
 }

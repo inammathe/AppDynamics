@@ -23,7 +23,6 @@ InModuleScope $AppDModule {
 
             #Get-AppDApplication mock
             $mockAppData = Import-CliXML -Path "$AppDMockDataLocation\Get-AppDApplication.Mock"
-
             Mock Get-AppDApplication -Verifiable -MockWith {
                 return $mockAppData
             }
