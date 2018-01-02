@@ -13,14 +13,14 @@
 function Get-AppDAccountId
 {
     [CmdletBinding()]
-    param()
+    param([boolean]$Force)
     Begin
     {
         Write-AppDLog "$($MyInvocation.MyCommand)"
     }
     Process
     {
-        if (([string]::IsNullOrEmpty($env:AppDAccountID))) {
+        if (([string]::IsNullOrEmpty($env:AppDAccountID)) -or $Force) {
             If (([string]::IsNullOrEmpty($env:AppDURL)) -or ([string]::IsNullOrEmpty($env:AppDAuth))) {
                 throw "At least one of the following variables does not have a value set: `$env:AppDURL or `$env:AppDAuth. Use Set-AppDConnectionInfo to set these values"
             }

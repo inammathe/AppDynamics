@@ -27,7 +27,11 @@ function Set-AppDConnectionInfo
 
         # AppDynamics password
         [Parameter(Mandatory=$false)]
-        [string]$Password = 'guest'
+        [string]$Password = 'guest',
+
+        # Use this switch to force a retreival of the Account Id (otherwise it will take whatever is in the $env:AppDAccountID variable)
+        [switch]
+        $Force
     )
     Begin
     {
@@ -37,7 +41,7 @@ function Set-AppDConnectionInfo
     {
         $env:AppDURL = $URL
         $env:AppDAuth = Get-AppDAuth -UserName $Username -Password $Password
-        $env:AppDAccountID = Get-AppDAccountId
+        $env:AppDAccountID = Get-AppDAccountId -Force $Force
     }
     End
     {
