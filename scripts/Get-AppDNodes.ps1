@@ -29,7 +29,7 @@ function Get-AppDNodes
     {
         # Get AppId if it is missing
         if (!$AppId -and $AppName) {
-            $AppId = (Get-AppDApplication -AppId $AppName).Id
+            $AppId = (Get-AppDApplication -AppName $AppName).Id
             if (!$AppId) {
                 $msg = "Failed to find application with application name: $AppName"
                 Write-AppDLog -Message $msg -Level 'Error'
