@@ -57,18 +57,27 @@ function Get-AppDMetricData
     {
         # Get AppId if it is missing
         if (!$AppId -and $AppName) {
-            $AppId = (Get-AppDApplication -AppId $AppName).Id
+            $AppId = (Get-AppDApplication -AppName $AppName).Id
         }
         elseif (-not $AppId -and -not $AppName)
         {
             $AppId = (Get-AppDApplication).Id
-            if (!$AppId) {
-                $msg = "Failed to find application with application name: $AppName"
-                Write-AppDLog -Message $msg -Level 'Error'
-                Throw $msg
-            }
         }
+        if (!$AppId) {
+            $msg = "Failed to find an Application ID on the controller"
+            Write-AppDLog -Message $msg -Level 'Error'
+            Throw $msg
+        }
+
+        <# Chosen metric types
+            |Average Response Time (ms)
+            |Calls per Minute
+            |Errors per Minute
+            |Number of Slow Calls
+            |Stall Count
+        #>
         $metricTypes = @("%7CAverage%20Response%20Time%20%28ms%29","%7CCalls%20per%20Minute","%7CErrors%20per%20Minute","%7CNumber%20of%20Slow%20Calls","%7CStall%20Count")
+
         $URLS =@()
         foreach ($path in $MetricPath) {
             foreach ($type in $metricTypes) {
