@@ -12,12 +12,12 @@ function Get-AppDBTMetrics
     param
     (
         # Use a gui
-        [Parameter(Mandatory=$true, Position=0, ParameterSetName='Interactive')]
+        [Parameter(Mandatory=$true, Position = 0, ParameterSetName='Interactive')]
         [switch]
         $Interactive,
 
-        # Use a gui
-        [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'Auto')]
+        # Don't use a gui
+        [Parameter(Mandatory = $true, Position = 0, ParameterSetName='Auto')]
         $AppId,
 
         [Parameter(Mandatory = $false)]
@@ -26,7 +26,12 @@ function Get-AppDBTMetrics
         # Export CSV
         [Parameter(Mandatory = $false)]
         [switch]
-        $ExportCSV
+        $ExportCSV,
+
+        # Destination for the CSV export
+        [Parameter(Mandatory = $false)]
+        [string]
+        $LiteralPath
     )
     Begin
     {
@@ -54,11 +59,17 @@ function Get-AppDBTMetrics
                     $MetricPaths = Get-AppDBTMetricPath -AppID $AppId
                 }
                 $MetricData = Get-AppDMetricData -MetricPath $MetricPaths -AppId $AppId
+                Write-Output $MetricData
             }
         }
 
         if ($ExportCSV) {
-            $MetricData | Export-Csv -NoTypeInformation ".\$($chosenApp.name)-$((Get-Date -Format 'dd-MM-yy')).csv"
+            if ($LiteralPath) {
+                $MetricData | Export-Csv -NoTypeInformation $LiteralPath
+            }
+            else {
+                $MetricData | Export-Csv -NoTypeInformation ".\$($chosenApp.name)-$((Get-Date -Format 'dd-MM-yy')).csv"
+            }
         }
     }
 }
