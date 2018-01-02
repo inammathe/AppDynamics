@@ -27,7 +27,7 @@ function Get-AppDEvent
         $eventType = 'APPLICATION_DEPLOYMENT',
 
         # Severity of the event
-        [ValidateSet('INFO','WARN','ERROR',"INFO,WARN,ERROR", ignorecase=$False)]
+        [ValidateSet('INFO','WARN','ERROR', ignorecase=$False)]
         $severities = 'INFO,WARN,ERROR'
     )
     Begin
