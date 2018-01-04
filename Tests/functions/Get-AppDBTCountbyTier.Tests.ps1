@@ -12,6 +12,11 @@ InModuleScope $AppDModule {
             # Prepare
             Mock Write-AppDLog -MockWith {} -ParameterFilter {$message -eq $AppDFunction}
 
+            $mockAppData = Import-CliXML -Path "$AppDMockDataLocation\Get-AppDApplication.Mock" | Select-Object -First 1
+            Mock Get-AppDApplication -Verifiable -MockWith {
+                return $mockAppData
+            }
+
             $mockData = Import-CliXML -Path "$AppDMockDataLocation\Get-AppDBTs.Mock"
             Mock Get-AppDBTs -Verifiable -MockWith {
                 return $mockData

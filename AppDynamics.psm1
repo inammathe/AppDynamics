@@ -104,5 +104,37 @@ function Get-AppDResource([string]$uri, [object]$connectionInfo) {
     Invoke-RestMethod -Method Get -Uri "$env:AppDURL/$uri" -Headers $connectionInfo.header -Verbose:$false
 }
 
-#region Utility functions
+function Test-AppId
+{
+    [CmdletBinding()]
+    param(
+        $AppDId,
+        $AppDName
+    )
+
+    Write-AppDLog -Message "Validating AppId..."
+    $AppId = @()
+    if($AppDId) {
+        foreach ($id in $AppDId) {
+            $AppId += (Get-AppDApplication -AppId $AppDId -ErrorAction SilentlyContinue).Id
+        }
+    }
+    elseif ($AppDName -and -not $AppDId) {
+        foreach ($name in $AppDName) {
+            $AppId += (Get-AppDApplication -AppName $name -ErrorAction SilentlyContinue).Id
+        }
+    }
+    elseif (-not $AppDId -and -not $AppDName)
+    {
+        $AppId = (Get-AppDApplication -ErrorAction SilentlyContinue).Id
+    }
+
+    if (!$AppId) {
+        $msg = "Failed to find application : ($AppDId|$AppDName)"
+        Write-AppDLog -Message $msg -Level 'Error'
+        Exit 1
+    }
+    Write-Output $AppId
+}
+
 #endregion

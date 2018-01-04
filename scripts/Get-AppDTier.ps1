@@ -32,6 +32,7 @@ function Get-AppDTier
     }
     Process
     {
+        $AppId = Test-AppId -AppDid $AppId -ErrorAction Stop
         foreach ($id in $AppId) {
             $result = @()
             if (!$TierId) {
