@@ -28,19 +28,8 @@ function Get-AppDNodes
     Process
     {
         # Get AppId if it is missing
-        if (!$AppId -and $AppName) {
-            $AppId = (Get-AppDApplication -AppName $AppName).Id
-            if (!$AppId) {
-                $msg = "Failed to find application with application name: $AppName"
-                Write-AppDLog -Message $msg -Level 'Error'
-                Throw $msg
-            }
-        }
-        elseif (-not $AppId -and -not $AppName)
-        {
-            $AppId = (Get-AppDApplication).Id
+        $AppId = Test-AppId -AppDId $AppId -AppDName $AppName
 
-        }
         foreach ($id in $AppId) {
             Get-AppDResource -uri "controller/api/accounts/$($connectionInfo.accountId)/applications/$id/nodes" -connectionInfo $connectionInfo
         }
