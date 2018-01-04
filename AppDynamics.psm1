@@ -113,12 +113,16 @@ function Test-AppId
     )
 
     Write-AppDLog -Message "Validating AppId..."
-
+    $AppId = @()
     if($AppDId) {
-        $AppId = (Get-AppDApplication -AppId $AppId -ErrorAction SilentlyContinue).Id
+        foreach ($id in $AppDId) {
+            $AppId += (Get-AppDApplication -AppId $AppDId -ErrorAction SilentlyContinue).Id
+        }
     }
     elseif ($AppDName -and -not $AppDId) {
-        $AppId = (Get-AppDApplication -AppName $AppName -ErrorAction SilentlyContinue).Id
+        foreach ($name in $AppDName) {
+            $AppId += (Get-AppDApplication -AppName $name -ErrorAction SilentlyContinue).Id
+        }
     }
     elseif (-not $AppDId -and -not $AppDName)
     {

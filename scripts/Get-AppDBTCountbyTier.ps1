@@ -22,28 +22,20 @@ function Get-AppDBTCountbyTier {
     }
     Process
     {
-        if ($AppId) {
-            $BTs = Get-AppDBTs -AppId $AppId
-        }
-        elseif ($AppName)
-        {
-            $BTs = Get-AppDBTs -AppName $AppName
-        }
-        elseif (-not $AppId -and -not $AppName)
-        {
-            $BTs = Get-AppDBTs
-        }
-
-        $total = 0
-        $BTCounts = @()
-        foreach($tier in $BTs.applicationComponentName | sort-object -Unique){
-            $total += ($BTs.applicationComponentName | Where-Object {$_ -eq $tier}).Count
-            $BTCounts += [pscustomobject]@{
-                Tier = $tier
-                BTCount = ($BTs.applicationComponentName | Where-Object {$_ -eq $tier}).Count
+        $AppId = Test-AppId -AppDId $AppId -AppDName $AppName
+        foreach ($id in $AppId) {
+            $BTs = Get-AppDBTs -AppId $id
+            $total = 0
+            $BTCounts = @()
+            foreach($tier in $BTs.applicationComponentName | sort-object -Unique){
+                $total += ($BTs.applicationComponentName | Where-Object {$_ -eq $tier}).Count
+                $BTCounts += [pscustomobject]@{
+                    Tier = $tier
+                    BTCount = ($BTs.applicationComponentName | Where-Object {$_ -eq $tier}).Count
+                }
             }
+            $BTCounts | Sort-Object BTCount -Descending
+            Write-Host "`nTotal: $total" -ForegroundColor Green
         }
-        $BTCounts | Sort-Object BTCount -Descending
-        Write-Host "`nTotal: $total" -ForegroundColor Green
     }
 }

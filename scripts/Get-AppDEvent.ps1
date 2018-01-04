@@ -38,16 +38,8 @@ function Get-AppDEvent
     }
     Process
     {
+        $AppId = Test-AppId -AppDId $AppId -AppDName $AppName
         $daysAgoInMins = [MATH]::Round(((Get-Date) - ((Get-Date).AddDays(-$daysAgo))).TotalMinutes)
-
-        # Get AppId if it is missing
-        if (!$AppId -and $AppName) {
-            $AppId = (Get-AppDApplication -AppName $AppName).Id
-        }
-        elseif (-not $AppId -and -not $AppName)
-        {
-            $AppId = (Get-AppDApplication).Id
-        }
 
         foreach ($id in $AppId) {
             Get-AppDResource -uri "controller/rest/applications/$id/events?event-types=$eventType&severities=$severities&time-range-type=BEFORE_NOW&duration-in-mins=$daysAgoInMins&output=JSON" -connectionInfo $connectionInfo

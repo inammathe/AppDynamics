@@ -26,19 +26,11 @@ function Get-AppDBTs {
     Begin
     {
         Write-AppDLog "$($MyInvocation.MyCommand)"
-
         $connectionInfo = New-AppDConnection
     }
     Process
     {
-        # Get AppId if it is missing
-        if (!$AppId -and $AppName) {
-            $AppId = (Get-AppDApplication -AppName $AppName).Id
-        }
-        elseif (-not $AppId -and -not $AppName)
-        {
-            $AppId = (Get-AppDApplication).Id
-        }
+        $AppId = Test-AppId -AppDId $AppId -AppDName $AppName
 
         foreach ($id in $AppId) {
             (Get-AppDResource -uri "controller/api/accounts/$($connectionInfo.accountId)/applications/$id/businesstransactions" -connectionInfo $connectionInfo).bts

@@ -10,7 +10,7 @@ InModuleScope $AppDModule {
     Describe "Get-AppDEvent Unit Tests" -Tag 'Unit' {
         Context "$AppDFunction return value validation" {
             # Prepare
-            Mock Write-AppDLog -Verifiable -MockWith {} -ParameterFilter {$message -eq $AppDFunction}
+            #Mock Write-AppDLog -Verifiable -MockWith {} -ParameterFilter {$message -eq $AppDFunction}
 
             Mock New-AppDConnection -MockWith {
                 $properties = [ordered]@{
@@ -32,7 +32,7 @@ InModuleScope $AppDModule {
             }
 
             # Act
-            $result = Get-AppDEvent -AppId 1
+            $result = Get-AppDEvent
 
             # Assert
             It "Verifiable mocks are called" {
@@ -45,7 +45,7 @@ InModuleScope $AppDModule {
                 $result -is [object] | Should -Be $true
             }
             It "Calls Get-AppDResource and is only invoked once" {
-                Assert-MockCalled -CommandName Get-AppDResource -Times 1 -Exactly
+                Assert-MockCalled -CommandName Get-AppDResource -Times 3 -Exactly
             }
         }
     }

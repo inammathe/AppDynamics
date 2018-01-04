@@ -32,8 +32,8 @@ function Get-AppDTier
     }
     Process
     {
+        $AppId = Test-AppId -AppDid $AppId -ErrorAction Stop
         foreach ($id in $AppId) {
-            $id = Test-AppId -AppDid $id -ErrorAction Stop
             $result = @()
             if (!$TierId) {
                 $result += Get-AppDResource -uri "controller/rest/applications/$id/tiers" -connectionInfo $connectionInfo
