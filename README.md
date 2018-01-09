@@ -20,6 +20,8 @@ PS> Save-Module -Name appdynamics -Path <path>
 PS> Install-Module -Name appdynamics
 ```
 
+https://www.powershellgallery.com/packages/appdynamics/
+
 
 ## Manually:
 1. Clone or download this repo https://github.com/inammathe/AppDynamics
