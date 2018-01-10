@@ -20,6 +20,8 @@ PS> Save-Module -Name appdynamics -Path <path>
 PS> Install-Module -Name appdynamics
 ```
 
+https://www.powershellgallery.com/packages/appdynamics/
+
 
 ## Manually:
 1. Clone or download this repo https://github.com/inammathe/AppDynamics
@@ -44,18 +46,24 @@ $MetricPaths = Get-AppDBTMetricPath -AppName $appName  | Select-Object -First 5
 Get-AppDMetricData -MetricPath $MetricPaths -AppName $appName | Out-GridView
 ```
 
+How to Contribute
+======
+1. Fork this repo
+2. Make your changes
+3. Create a pull request
+
 CI/CD Pipeline
 ======
-Adapted from http://ramblingcookiemonster.github.io/PSDeploy-Inception/#appveyor-and-powershell-gallery <- love this guy
+Adapted from http://ramblingcookiemonster.github.io/PSDeploy-Inception/#appveyor-and-powershell-gallery
 ## Scaffolding
-* AppVeyor.yml. Instructions for AppVeyor. We’ll still use this, but we’ll try to move as much of the build as possible into PowerShell tooling that will work in other build systems.
-* Start-Build.ps1. A build script that sets up our dependencies and kicks off psake. Portable across build systems. We install and use a few dependencies:
+* AppVeyor.yml. Instructions for AppVeyor.
+* Start-Build.ps1. A build script that sets up dependencies and kicks off psake. Portable across build systems. This initialises the following:
     * BuildHelpers. A module to help with portability and some common build needs
-    * Psake. A build automation tool. Lets us define a series of tasks for our build
+    * Psake. A build automation tool. This Defines a series of tasks for our build
     * Pester. A testing framework for PowerShell
     * PSDeploy. A module to simplify PowerShell based deployments - Modules, in this case
 * Psake.ps1. Tasks to run - testing, build (e.g. bump version number), and deployment to the PowerShell gallery
-* deploy.psdeploy.ps1. Instructions that tell PSDeploy how to deploy our module
+* deploy.psdeploy.ps1. Instructions that tell PSDeploy how to deploy the module
 
 ## Process
 1. GitHub sends AppVeyor a notification of your commit
