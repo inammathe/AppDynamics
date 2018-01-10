@@ -101,7 +101,7 @@ function Post-AppDResource([string]$uri, [object]$resource, [object]$connectionI
 
 function Get-AppDResource([string]$uri, [object]$connectionInfo) {
     Write-AppDLog "$($MyInvocation.MyCommand)`turi:$uri"
-    Invoke-RestMethod -Method Get -Uri "$env:AppDURL/$uri" -Headers $connectionInfo.header -Verbose:$false
+    Invoke-RestMethod -Method Get -Uri (Join-Parts -Separator '/' -Parts $env:AppDURL,$uri) -Headers $connectionInfo.header -Verbose:$false
 }
 
 function Test-AppId
@@ -137,4 +137,17 @@ function Test-AppId
     Write-Output $AppId
 }
 
+
+function Join-Parts
+{
+    param
+    (
+        $Parts = $null,
+        $Separator = ''
+    )
+
+    ($Parts | Where-Object { $_ } | ForEach-Object {
+         ([string]$_).trim($Separator)
+    } | Where-Object { $_ }) -join $Separator
+}
 #endregion
