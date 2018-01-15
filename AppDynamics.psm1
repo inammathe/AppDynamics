@@ -206,9 +206,7 @@ function ConvertFrom-EpochTime
         Milliseconds    { $result = $epoch.AddMilliseconds($epochTime) }
     }
     if ($ToLocalTime) {
-        $strCurrentTimeZone = (Get-WmiObject win32_timezone).StandardName
-        $TZ = [System.TimeZoneInfo]::FindSystemTimeZoneById($strCurrentTimeZone)
-        [System.TimeZoneInfo]::ConvertTimeFromUtc($result, $TZ)
+        [timezone]::CurrentTimeZone.ToLocalTime($result)
     }
     else {
         $result
