@@ -21,7 +21,7 @@ InModuleScope $AppDModule {
                 return New-Object psobject -Property $properties
             }
 
-            $mockAppData = Import-CliXML -Path "$AppDMockDataLocation\Get-AppDApplication.Mock"
+            $mockAppData = Import-CliXML -Path "$AppDMockDataLocation\Get-AppDApplication.Mock" | Select-Object -First 1
             Mock Get-AppDApplication -MockWith {
                 return $mockAppData
             }
@@ -48,7 +48,7 @@ InModuleScope $AppDModule {
                 }
             }
             It "Calls Get-AppDResource and is only invoked once" {
-                Assert-MockCalled -CommandName Get-AppDResource -Times 3 -Exactly
+                Assert-MockCalled -CommandName Get-AppDResource -Times 1 -Exactly
             }
         }
     }
