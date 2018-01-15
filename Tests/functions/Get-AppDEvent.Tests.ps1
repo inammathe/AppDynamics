@@ -32,7 +32,7 @@ InModuleScope $AppDModule {
             }
 
             # Act
-            $result = Get-AppDEvent
+            $result = Get-AppDEvent -EventType 'APPLICATION_ERROR' -TimeRangeType 'BEFORE_NOW' -DurationInMins 120
 
             # Assert
             It "Verifiable mocks are called" {
@@ -43,6 +43,9 @@ InModuleScope $AppDModule {
             }
             It "Returns the expected type" {
                 $result -is [object] | Should -Be $true
+                foreach ($res in $result) {
+                    $res.eventTime -is [DateTime]
+                }
             }
             It "Calls Get-AppDResource and is only invoked once" {
                 Assert-MockCalled -CommandName Get-AppDResource -Times 3 -Exactly
