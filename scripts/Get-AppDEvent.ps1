@@ -94,9 +94,7 @@ function Get-AppDEvent
                 Write-AppDLog "$type must be supplied with this event type" -Level 'Error' -ErrorAction Stop
             }
 
-            $epoch = Get-Date -Date "01/01/1970"
-            $timeInMS = [MATH]::floor(((Get-Date $time) - $epoch).TotalMilliseconds)
-            Write-Output $timeInMS
+            Write-Output (ConvertTo-EpochTime -datetime (Get-Date $time))
         }
 
         # Validation
@@ -134,7 +132,7 @@ function Get-AppDEvent
         foreach ($id in $AppId) {
             $response = Get-AppDResource -uri "controller/rest/applications/$id/events?event-types=$eventType&severities=$severities&time-range-type=$TimeRangeType&$TimeRangeString&output=JSON" -connectionInfo $connectionInfo
             foreach ($res in $response) {
-                $res.eventTime = [timezone]::CurrentTimeZone.ToLocalTime($res.eventTime)
+                $res.eventTime = ConvertFrom-EpochTime -epochTime $res.eventTime -ToLocal
             }
             Write-Output $response
         }
