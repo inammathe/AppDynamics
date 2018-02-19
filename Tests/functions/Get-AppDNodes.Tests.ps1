@@ -28,7 +28,7 @@ InModuleScope $AppDModule {
 
             $mockNodeData = Import-CliXML -Path "$AppDMockDataLocation\Get-AppDNodes.Mock"
             Mock Get-AppDResource -Verifiable -MockWith {
-                return $mockMetricData
+                return $mockNodeData
             }
 
             # Act
