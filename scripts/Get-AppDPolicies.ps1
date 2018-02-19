@@ -15,7 +15,12 @@ function Get-AppDPolicies
     (
         # Mandatory application ID.
         [Parameter(Mandatory=$true, ValueFromPipeline)]
-        $AppId
+        $AppId,
+
+        # Optional array of policy IDs.
+        [Parameter(Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        $PolicyId
     )
     Begin
     {
@@ -26,7 +31,15 @@ function Get-AppDPolicies
     {
         $AppId = Test-AppId -AppDid $AppId -ErrorAction Stop
         foreach ($id in $AppId) {
-            Get-AppDResource -uri "controller/api/accounts/$($connectionInfo.accountId)/applications/$id/policies" -connectionInfo $connectionInfo
+            if ($PolicyId) {
+                foreach ($polId in $PolicyId) {
+                    Get-AppDResource -uri "controller/api/accounts/$($connectionInfo.accountId)/applications/$id/policies/$polId" -connectionInfo $connectionInfo
+                }
+            }
+            else
+            {
+                Get-AppDResource -uri "controller/api/accounts/$($connectionInfo.accountId)/applications/$id/policies" -connectionInfo $connectionInfo
+            }
         }
     }
 }
