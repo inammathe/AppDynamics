@@ -137,7 +137,6 @@ function Test-AppId
     Write-Output $AppId
 }
 
-
 function Join-Parts
 {
     param
@@ -149,5 +148,68 @@ function Join-Parts
     ($Parts | Where-Object { $_ } | ForEach-Object {
          ([string]$_).trim($Separator)
     } | Where-Object { $_ }) -join $Separator
+}
+
+function ConvertTo-EpochTime
+{
+    param
+    (
+        [Parameter(Mandatory)]
+        [datetime]$datetime,
+
+        [Parameter(Mandatory=$false)]
+        [ValidateSet('Days',
+            'Hours',
+            'Minutes',
+            'Seconds',
+            'Milliseconds')]
+        $format = 'MilliSeconds'
+    )
+
+    $timeSpan = (New-TimeSpan -Start (Get-Date -Date "01/01/1970") -End $datetime)
+    switch ($format) {
+        Days            { [MATH]::Floor($timeSpan.TotalDays) }
+        Hours           { [MATH]::Floor($timeSpan.TotalHours) }
+        Minutes         { [MATH]::Floor($timeSpan.TotalMinutes) }
+        Seconds         { [MATH]::Floor($timeSpan.TotalSeconds) }
+        Milliseconds    { [MATH]::Floor($timeSpan.TotalMilliseconds) }
+    }
+}
+
+function ConvertFrom-EpochTime
+{
+    param
+    (
+        [Parameter(Mandatory)]
+        [long]$epochTime,
+
+        #AppDynamics Stores their timespamps in milliseconds
+        [Parameter(Mandatory=$false)]
+        [ValidateSet('Days',
+            'Hours',
+            'Minutes',
+            'Seconds',
+            'Milliseconds')]
+        $format = 'MilliSeconds',
+
+        #AppDynamics Stores their timespamps in UTC
+        [Parameter(Mandatory=$false)]
+        [switch]
+        $ToLocalTime
+    )
+    $epoch = Get-Date -Date '01/01/1970'
+    switch ($format) {
+        Days            { $result = $epoch.AddDays($epochTime) }
+        Hours           { $result = $epoch.AddHours($epochTime) }
+        Minutes         { $result = $epoch.AddMinutes($epochTime) }
+        Seconds         { $result = $epoch.AddSeconds($epochTime) }
+        Milliseconds    { $result = $epoch.AddMilliseconds($epochTime) }
+    }
+    if ($ToLocalTime) {
+        [timezone]::CurrentTimeZone.ToLocalTime($result)
+    }
+    else {
+        $result
+    }
 }
 #endregion
