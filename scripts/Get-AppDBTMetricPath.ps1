@@ -10,7 +10,7 @@
 #>
 function Get-AppDBTMetricPath
 {
-    [CmdletBinding(SupportsShouldProcess=$true)]
+    [CmdletBinding()]
     param(
         # Mandatory application ID.
         [Parameter(Mandatory=$false, ValueFromPipeline)]
