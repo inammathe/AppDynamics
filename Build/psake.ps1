@@ -5,7 +5,7 @@ Properties {
         $ProjectRoot = $ENV:BHProjectPath
         if(-not $ProjectRoot)
         {
-            $ProjectRoot = Resolve-Path "$PSScriptRoot\.."
+            $ProjectRoot = Resolve-Path "$PSScriptRoot\."
         }
 
     $Timestamp = Get-Date -UFormat "%Y%m%d-%H%M%S"
