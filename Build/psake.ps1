@@ -79,7 +79,8 @@ Task Build -Depends Test {
 
 Task Deploy -Depends Build {
     $lines
-
+    "`$ENV:BHModulePath : $ENV:BHModulePath"
+    "`$ProjectRoot : $ProjectRoot"
     $Params = @{
         Path = "$ProjectRoot\Build"
         Force = $true
