@@ -63,7 +63,7 @@ Task Build -Depends Test {
     "`$ProjectRoot : $ProjectRoot"
 
     # Load the module, read the exported functions, update the psd1 FunctionsToExport
-    Set-ModuleFunctions
+    Set-ModuleFunctions -Name $ENV:BHModulePath
 
     # Bump the module version if we didn't already
     Try
