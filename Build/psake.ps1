@@ -2,7 +2,7 @@
 # Init some things
 Properties {
     # Find the build folder based on build system
-        #$ProjectRoot = $ENV:BHProjectPath
+        $ProjectRoot = $ENV:BHProjectPath
         if(-not $ProjectRoot)
         {
             $ProjectRoot = Resolve-Path "$PSScriptRoot\.."
