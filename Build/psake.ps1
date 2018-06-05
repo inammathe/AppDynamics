@@ -58,7 +58,10 @@ Task Test -Depends Init  {
 
 Task Build -Depends Test {
     $lines
-    
+
+    "`$ENV:BHModulePath : $ENV:BHModulePath"
+    "`$ProjectRoot : $ProjectRoot"
+
     # Load the module, read the exported functions, update the psd1 FunctionsToExport
     Set-ModuleFunctions
 
@@ -79,8 +82,6 @@ Task Build -Depends Test {
 
 Task Deploy -Depends Build {
     $lines
-    "`$ENV:BHModulePath : $ENV:BHModulePath"
-    "`$ProjectRoot : $ProjectRoot"
     $Params = @{
         Path = "$ProjectRoot\Build"
         Force = $true
