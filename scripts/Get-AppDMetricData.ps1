@@ -69,7 +69,7 @@ function Get-AppDMetricData
         $URLS =@()
         foreach ($path in $MetricPath) {
             foreach ($type in $metricTypes) {
-                $URLS +=  "controller/rest/applications/6/metric-data?metric-path=Business%20Transaction%20Performance%7CBusiness%20Transactions%7C" + $path + $type + "&time-range-type=BEFORE_NOW&duration-in-mins=$MinsAgo"
+                $URLS +=  "controller/rest/applications/$AppId/metric-data?metric-path=Business%20Transaction%20Performance%7CBusiness%20Transactions%7C" + $path + $type + "&time-range-type=BEFORE_NOW&duration-in-mins=$MinsAgo"
             }
         }
         $URLS = $URLS.Replace(' ','%20')
