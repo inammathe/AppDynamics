@@ -25,8 +25,6 @@
     String[]]
 .OUTPUTS
     PSCustomObject
-.NOTES
-    General notes
 #>
 function Get-AppDMetricData
 {
