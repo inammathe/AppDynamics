@@ -28,7 +28,7 @@ function Get-AppDAuth
     }
     Process
     {
-        if ($Username -notmatch '.+?@customer1$') #ends with @customer1
+        if ($Username -notmatch '.+?@[a-zA-Z0-9]+$') #ends with @someAccountName
         {
             $Username += '@customer1'
         }
